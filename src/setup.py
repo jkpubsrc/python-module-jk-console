@@ -8,12 +8,12 @@ def readme():
 
 setup(name="jk_console",
 	version="0.2019.1.22",
-	description="This python module provides a variety of essential functionality for implementing versatile programs using the console. (Please have a look at the documentation for details.)",
+	description="This python module provides a variety of essential functions for implementing versatile programs using the console. (Please have a look at the documentation for details.)",
 	author="Jürgen Knauth",
 	author_email="pubsrc@binary-overflow.de",
 	license="Apache 2.0",
 	url="https://github.com/jkpubsrc/python-module-jk-console",
-	download_url="https://github.com/jkpubsrc/python-module-jk-json/tarball/0.2019.1.22",
+	download_url="https://github.com/jkpubsrc/python-module-jk-console/tarball/0.2019.1.22",
 	keywords=[
 		"console",
 		"terminal",
