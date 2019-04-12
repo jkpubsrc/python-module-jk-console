@@ -25,3 +25,8 @@ from .IntRGB import IntRGB
 from .ConsoleBufferRGB import ConsoleBufferRGB
 
 
+from .SimpleTable import SimpleTable, SimpleTableCell, SimpleTableColumn, SimpleTableRow, SimpleTableConstants
+
+
+
+
