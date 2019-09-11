@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
+#
+# This example uses a console buffer implementation to perform fast rendering of text.
+# Performance measurements are displayed.
+# Performance might vary greatly from system to system.
+#
+
 
 
 import sys
@@ -21,6 +27,9 @@ w = None
 h = None
 cb = None
 mods = [ 0, -1, -1, -2, -2, -1, -1, 0 ]
+bForProfiling = True
+
+
 
 def init():
 	global w, h, cb
@@ -49,8 +58,8 @@ init()
 
 drawPattern(cb, 0)
 i = 1
-while True:
-	time.sleep(0.05)
+while not bForProfiling or (i < 200):
+	#time.sleep(0.05)
 
 	t0 = datetime.datetime.now()
 	drawPattern(cb, i)
@@ -58,17 +67,20 @@ while True:
 	cb.bufferToConsole(bForceFullRepaint=True)
 	t2 = datetime.datetime.now()
 
-	time.sleep(0.001)
+	#time.sleep(0.001)
 
 	td1 = t1 - t0
 	td2 = t2 - t1
 	tdS = t2 - t0
-	pdata = ("~~ screen-size: ", str(w), "x", str(h), " pixels"
+	pdata = [
+		"~~ screen-size: ", str(w), "x", str(h), " pixels"
 		" ~~ rendering: %d.%03ds" % (td1.seconds, (td1.microseconds + 499) // 1000),
 		" ~~ buffer-to-screen: %d.%03ds" % (td2.seconds, (td2.microseconds + 499) // 1000),
 		" ~~ total: %d.%03ds (fps %d)" % (tdS.seconds, (tdS.microseconds + 499) // 1000, int(1.0 / (t2 - t0).total_seconds())),
-		" ~~",
-	)
+	]
+	if bForProfiling:
+		pdata.append(" ~~ " + str(199-i))
+	pdata.append(" ~~")
 	cb.printText(2, h - 2, Console.ForeGround.STD_WHITE, "".join(pdata))
 	i += 1
 

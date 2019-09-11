@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
+#
+# This example demonstrates how to write colored text to STDOUT.
+#
+
 
 
 

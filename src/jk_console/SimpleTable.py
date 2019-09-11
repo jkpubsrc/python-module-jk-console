@@ -21,7 +21,7 @@ class SimpleTableCell(SimpleTableConstants):
 
 	def __init__(self, table):
 		self.__table = table
-		self.halign = SimpleTableConstants.HALIGN_LEFT
+		self.halign = None
 		self.value = None
 		self.color = None
 		self.textTransform = None
@@ -220,7 +220,7 @@ class SimpleTable(SimpleTableConstants):
 	def row(self, nRow:int):
 		if (nRow >= len(self.__rows)) or (nRow < 0):
 			return None
-		return self.__rows[nColumn]
+		return self.__rows[nRow]
 	#
 
 	def __getColumnCells(self, nColumn:int):
@@ -237,6 +237,23 @@ class SimpleTable(SimpleTableConstants):
 		if printFunction is None:
 			printFunction = print
 
+		outBuffer = []
+		self.__printToBuffer(outBuffer, prefix, gapChar, vLineChar, hLineChar, crossChar, useColors)
+
+		for line in outBuffer:
+			printFunction(line)
+	#
+
+	#
+	# Print the table.
+	#
+	def printToLines(self, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", useColors:bool = True):
+		outBuffer = []
+		self.__printToBuffer(outBuffer, prefix, gapChar, vLineChar, hLineChar, crossChar, useColors)
+		return outBuffer
+	#
+
+	def __printToBuffer(self, outBuffer:list, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", useColors:bool = True):
 		columnWidths = self.__getColumnWidths()
 
 		for row in self.__rows:
@@ -261,7 +278,7 @@ class SimpleTable(SimpleTableConstants):
 
 				data.append((nColumn, column, text))
 
-			printFunction("".join(rowCells))
+			outBuffer.append("".join(rowCells))
 
 			if row.hlineAfterRow:
 				rowCells.clear()
@@ -276,7 +293,7 @@ class SimpleTable(SimpleTableConstants):
 					else:
 						rowCells.append(rowGapHLine)
 
-				printFunction("".join(rowCells))
+				outBuffer.append("".join(rowCells))
 	#
 
 	def raw(self):
@@ -287,7 +304,7 @@ class SimpleTable(SimpleTableConstants):
 			for nColumn in range(0, self.numberOfColumns):
 				column = self.column(nColumn)
 				halign, color, textTransform, text = self.__getCellData(row, column, row[nColumn])
-				rowCells.append(self.__hformatCellText(text, halign, textTransform, 0, 0, 0))
+				rowCells.append(self.__hformatCellText(text, None, textTransform, 0, 0, 0))
 			ret.append(rowCells)
 
 		return ret

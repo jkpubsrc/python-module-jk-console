@@ -342,6 +342,9 @@ class Console(object):
 	#
 	"""
 
+	MOUSE_ENABLE = "\033[?1000;1006;1015h"
+	MOUSE_DISABLE = "\033[?1000;1006;1015l"
+
 	RESET = "\033[0m"
 	RESET_TOPLEFT = "\033[0m\033[1;1H"
 
@@ -436,6 +439,8 @@ class Console(object):
 		KEY_SHIFT_F9			= "\x1b\x5b\x32\x30\x3b\x32\x7e"
 		KEY_SHIFT_F11			= "\x1b\x5b\x32\x33\x3b\x32\x7e"
 		KEY_SHIFT_F12			= "\x1b\x5b\x32\x34\x3b\x32\x7e"
+		MOUSE_EVENT				= "\x1b\x5b\x3c"
+		MOUSE_EVENT_2			= "\x1b\x5b\x5b\x3c"
 
 		ALL_KEYS_TO_KEY_NAME = {
 			KEY_SHIFT_F1: "Shift+F1",
@@ -517,6 +522,7 @@ class Console(object):
 			KEY_F8: "F8",
 			KEY_F9: "F9",
 			KEY_F12: "F12",
+			MOUSE_EVENT: "MOUSE_EVENT",
 		}
 
 		ALL_KEY_NAMES_TO_KEY = {}
@@ -534,6 +540,7 @@ class Console(object):
 			KEY_CTRL_F7, KEY_CTRL_F8, KEY_CTRL_F9, KEY_CTRL_F10, KEY_CTRL_F11, KEY_CTRL_F12,
 			KEY_SHIFT_F1, KEY_SHIFT_F2, KEY_SHIFT_F3, KEY_SHIFT_F4, KEY_SHIFT_F5, KEY_SHIFT_F6,
 			KEY_SHIFT_F7, KEY_SHIFT_F8, KEY_SHIFT_F9, KEY_SHIFT_F11, KEY_SHIFT_F12,
+			MOUSE_EVENT, MOUSE_EVENT_2,
 		])
 
 		@staticmethod
@@ -542,7 +549,7 @@ class Console(object):
 		#
 
 		#
-		# Read a single character from STDIN.
+		# Read a single character from STDIN. (This keyboard character can be expressed by multiple characters.)
 		#
 		# @return	str		Returns a string. If the string contains a single character this will be an ordinary character. Otherwise
 		#					the key pressed was a special character. Use the constants defined in this class for checking what key has
@@ -559,6 +566,16 @@ class Console(object):
 				if c in tree:
 					x = tree[c]
 					if isinstance(x, str):
+						if x == Console.Input.MOUSE_EVENT_2:
+							x = Console.Input.MOUSE_EVENT
+						if x == Console.Input.MOUSE_EVENT:
+							s = []
+							while True:
+								c = _readchar()
+								s.append(c)
+								if (c == "M") or (c == 'm'):
+									break
+							x += "".join(s)
 						return x
 					else:
 						tree = x

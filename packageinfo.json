@@ -1,7 +1,7 @@
 {
 	"language": "python3",
 	"name": "jk_console",
-	"version": "0.2019.4.12",
+	"version": "0.2019.9.10",
 	"meta": {
 		"description": "This python module provides a variety of essential functions for implementing versatile programs using the console. (Please have a look at the documentation for details.)",
 		"keywords": [
@@ -19,24 +19,31 @@
 			}
 		],
 		"wiki": {
-			"page": "DevDocs:jk_console"
+			"documentation_page": "DevDocs:jk_console",
+			"issues_page": "jk_console"
 		}
 	},
-	"repository": {
-		"type": "github",
-		"user": "jkpubsrc",
-		"project": "python-module-jk-htmlparser"
-	},
+	"repositories": [
+		{
+			"type": "github",
+			"user": "jkpubsrc",
+			"project": "python-module-jk-htmlparser"
+		}
+	],
 	"source": {
 		"packages": [
-			"jk_console"
+			"jk_console",
+			"jk_console.viewport"
 		],
 		"extra_data_files": [
 		]
 	},
 	"requirements": {
 		"python_packages": [
-			"msvcrt"
+			{
+				"import": "msvcrt",
+				"os": "windows"
+			}
 		]
 	}
 }

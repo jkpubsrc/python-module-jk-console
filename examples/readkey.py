@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
+#
+# This example demonstrates reading data from the keyboard without timeout.
+#
 
 
 

@@ -11,7 +11,7 @@ Calculating this difference is computationally expensive to some extent. If very
 You can choose between these different kind of buffer systems:
 
 * `ConsoleBuffer`
-	* *Description:* This buffer consists of cells that contain a character and string based color data where background and foreground is stored in the same color data field.
+	* *Description:* This buffer consists of cells that contain a) a character to display and b) a combined string color data field (where background and foreground is stored in the same color data field).
 	* *Links:* [Class: ConsoleBuffer](ConsoleBuffer.md)
 * `ConsoleBufferRGB`
 	* *Description:* This buffer consists of cells that contain a character and integer based color data where background and foreground is stored in two different color data fields.

@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
+#
+# This example demonstrates color output.
+# In this case RGB colors are generated. Please note that this might not work
+# on older systems if RGB is not supported.
+#
+
 
 
 import os

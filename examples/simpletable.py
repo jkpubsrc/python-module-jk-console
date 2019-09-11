@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+#
+# This example demonstrates the use of SimpleTable with alignments, text transformations and colors.
+#
+
+
 
 import os
 import sys
