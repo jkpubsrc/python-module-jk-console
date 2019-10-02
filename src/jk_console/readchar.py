@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 # This file is based on magmax readchar as provided on github under the MIT license:
 # https://github.com/magmax/python-readchar/blob/master/readchar/readchar.py

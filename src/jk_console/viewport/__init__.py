@@ -15,5 +15,4 @@ MAX_BRIGHTNESS = __vpr.MAX_BRIGHTNESS
 
 
 
-__version__ = "0.2019.9.10"
-
+__version__ = "0.2019.10.2"

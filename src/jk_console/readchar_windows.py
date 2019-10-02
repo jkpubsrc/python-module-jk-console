@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 # Initially taken from:
 # http://code.activestate.com/recipes/134892/#c9
 # Thanks to Stephen Chappell

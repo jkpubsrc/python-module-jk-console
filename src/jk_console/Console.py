@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 
 
@@ -405,6 +404,24 @@ class Console(object):
 		KEY_CTRL_CURSOR_RIGHT	= "\x1b\x5b\x31\x3B\x35\x43"
 		KEY_CTRL_CURSOR_UP		= "\x1b\x5b\x31\x3B\x35\x41"
 		KEY_CTRL_CURSOR_DOWN	= "\x1b\x5b\x31\x3B\x35\x42"
+		KEY_ALT_CURSOR_PAGE_DOWN	= "\x1b\x5b\x36\x3b\x33\x7e"
+		KEY_ALT_CURSOR_PAGE_UP		= "\x1b\x5b\x35\x3b\x33\x7e"
+		KEY_ALT_CURSOR_LEFT		= "\x1b\x5b\x31\x3b\x33\x44"
+		KEY_ALT_CURSOR_RIGHT	= "\x1b\x5b\x31\x3b\x33\x43"
+		KEY_ALT_CURSOR_UP		= "\x1b\x5b\x31\x3b\x33\x41"
+		KEY_ALT_CURSOR_DOWN		= "\x1b\x5b\x31\x3b\x33\x42"
+		KEY_ALT_HOME			= "\x1b\x5b\x31\x3b\x33\x48"
+		KEY_ALT_END				= "\x1b\x5b\x31\x3b\x33\x46"
+		KEY_CTRL_ALT_HOME		= "\x1b\x5b\x31\x3b\x37\x48"
+		KEY_CTRL_ALT_END		= "\x1b\x5b\x31\x3b\x37\x46"
+		KEY_CTRL_ALT_LEFT		= "\x1b\x5b\x31\x3b\x37\x44"
+		KEY_CTRL_ALT_RIGHT		= "\x1b\x5b\x31\x3b\x37\x43"
+		KEY_CTRL_ALT_UP			= "\x1b\x5b\x31\x3b\x37\x41"
+		KEY_CTRL_ALT_DOWN		= "\x1b\x5b\x31\x3b\x37\x42"
+		KEY_HOME				= "\x1b\x5b\x48"
+		KEY_END					= "\x1b\x5b\x46"
+		KEY_CTRL_HOME			= "\x1b\x5b\x31\x3b\x35\x48"
+		KEY_CTRL_END			= "\x1b\x5b\x31\x3b\x35\x46"
 		KEY_DELETE				= "\x1b\x5b\x33\x7e"
 		KEY_INSERT				= "\x1b\x5b\x32\x7e"
 		KEY_F2					= "\x1b\x4f\x51"
@@ -511,6 +528,18 @@ class Console(object):
 			KEY_CTRL_CURSOR_RIGHT: "Ctrl+CursorRight",
 			KEY_CTRL_CURSOR_UP: "Ctrl+CursorUp",
 			KEY_CTRL_CURSOR_DOWN: "Ctrl+CursorDown",
+			KEY_ALT_CURSOR_LEFT: "Alt+CursorLeft",
+			KEY_ALT_CURSOR_RIGHT: "Alt+CursorRight",
+			KEY_ALT_CURSOR_UP: "Alt+CursorUp",
+			KEY_ALT_CURSOR_DOWN: "Alt+CursorDown",
+			KEY_ALT_CURSOR_PAGE_UP: "Alt+PageUp",
+			KEY_ALT_CURSOR_PAGE_DOWN: "Alt-PageDown",
+			KEY_ALT_HOME: "Alt+Home",
+			KEY_ALT_END: "Alt+End",
+			KEY_CTRL_HOME: "Ctrl+Home",
+			KEY_CTRL_END: "Ctrl+End",
+			KEY_HOME: "Home",
+			KEY_END: "End",
 			KEY_DELETE: "Delete",
 			KEY_INSERT: "Insert",
 			KEY_F2: "F2",
@@ -522,6 +551,12 @@ class Console(object):
 			KEY_F8: "F8",
 			KEY_F9: "F9",
 			KEY_F12: "F12",
+			KEY_CTRL_ALT_HOME: "Ctrl+Alt+Home",
+			KEY_CTRL_ALT_END: "Ctrl+Alt+End",
+			KEY_CTRL_ALT_LEFT: "Ctrl+Alt+Left",
+			KEY_CTRL_ALT_RIGHT: "Ctrl+Alt+Right",
+			KEY_CTRL_ALT_UP: "Ctrl+Alt+Up",
+			KEY_CTRL_ALT_DOWN: "Ctrl+Alt+Down",
 			MOUSE_EVENT: "MOUSE_EVENT",
 		}
 
@@ -540,6 +575,10 @@ class Console(object):
 			KEY_CTRL_F7, KEY_CTRL_F8, KEY_CTRL_F9, KEY_CTRL_F10, KEY_CTRL_F11, KEY_CTRL_F12,
 			KEY_SHIFT_F1, KEY_SHIFT_F2, KEY_SHIFT_F3, KEY_SHIFT_F4, KEY_SHIFT_F5, KEY_SHIFT_F6,
 			KEY_SHIFT_F7, KEY_SHIFT_F8, KEY_SHIFT_F9, KEY_SHIFT_F11, KEY_SHIFT_F12,
+			KEY_ALT_CURSOR_DOWN, KEY_ALT_CURSOR_LEFT, KEY_ALT_CURSOR_RIGHT, KEY_ALT_CURSOR_UP,
+			KEY_ALT_CURSOR_PAGE_UP, KEY_ALT_CURSOR_PAGE_DOWN, KEY_ALT_HOME, KEY_ALT_END,
+			KEY_CTRL_HOME, KEY_CTRL_END, KEY_HOME, KEY_END,
+			KEY_CTRL_ALT_HOME, KEY_CTRL_ALT_END, KEY_CTRL_ALT_LEFT, KEY_CTRL_ALT_RIGHT, KEY_CTRL_ALT_UP, KEY_CTRL_ALT_DOWN,
 			MOUSE_EVENT, MOUSE_EVENT_2,
 		])
 
@@ -639,6 +678,12 @@ class Console(object):
 		return os.get_terminal_size()[1]
 	#
 
+	#
+	# Returns the current cursor position.
+	#
+	# @return	int x		The column position (starting at zero).
+	# @return	int y		The row position (starting at zero).
+	#
 	@staticmethod
 	def getCursorPosition():
 		print("\u001B[6n", end="", flush=True)
@@ -648,9 +693,9 @@ class Console(object):
 			c = Console.Input.readKey()
 			buf += c
 		sYX = buf[2:-1].split(";")
-		x = int(sYX[0]) - 1
-		y = int(sYX[1]) - 1
-		return (y, x)
+		y = int(sYX[0]) - 1
+		x = int(sYX[1]) - 1
+		return (x, y)
 	#
 
 	#
@@ -658,6 +703,9 @@ class Console(object):
 	#
 	@staticmethod
 	def printAt(x:int, y:int, text:str, bFlush:bool=True):
+		assert isinstance(x, int)
+		assert isinstance(y, int)
+
 		print("\033[" + str(y + 1) + ";" + str(x + 1) + "H" + text, end='', flush=bFlush)
 	#
 
@@ -706,6 +754,9 @@ class Console(object):
 	#
 	@staticmethod
 	def moveCursorTo(x:int, y:int, bFlush:bool=True):
+		assert isinstance(x, int)
+		assert isinstance(y, int)
+
 		print("\033[" + str(y + 1) + ";" + str(x + 1) + "H", end='', flush=bFlush)
 	#
 
