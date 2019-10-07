@@ -19,12 +19,14 @@ from jk_console import *
 
 class Effect1(object):
 
-	def __init__(self, width:int = None, height:int = None):
+	def __init__(self, x = None, y = None, width:int = None, height:int = None):
 		self.chars = ".,;/;,. "
 		self.colors = [ Console.ForeGround.STD_LIGHTGRAY, Console.ForeGround.STD_BLUE, Console.ForeGround.STD_LIGHTBLUE, Console.ForeGround.STD_LIGHTCYAN,
 			Console.ForeGround.STD_LIGHTBLUE, Console.ForeGround.STD_BLUE, Console.ForeGround.STD_LIGHTGRAY, Console.RESET ]
 		self.mods = [ 0, -1, -1, -2, -2, -1, -1, 0 ]
 
+		self.x = x
+		self.y = y
 		self.expectedWidth = width
 		self.expectedHeight = height
 		self.w = None
@@ -40,8 +42,14 @@ class Effect1(object):
 	def init(self):
 		self.lastConsoleWidth, self.lastConsoleHeight = Console.getSize()
 
-		self.w = Console.width() - 1 if self.expectedWidth is None else min(self.expectedWidth, Console.width() - 1)
-		self.h = Console.height() - 1 if self.expectedHeight is None else min(self.expectedHeight, Console.height() - 1)
+		self.w = Console.width() - 1 - self.x
+		if self.expectedWidth is not None:
+			self.w = min(self.expectedWidth, self.w)
+
+		self.h = Console.height() - 1 - self.y
+		if self.expectedHeight is not None:
+			self.h = min(self.expectedHeight, self.h)
+
 		self.cb = ConsoleBuffer(self.w, self.h)
 
 		rect = Rect(0, 0, self.w, self.h)
@@ -59,11 +67,11 @@ class Effect1(object):
 				self.cb.set(ix, iy, self.colors[i], self.chars[i])
 	#
 
-	def runOneLoop(self):
+	def runLoopOnce(self):
 		t0 = datetime.datetime.now()
 		self.drawPattern(self.i)
 		t1 = datetime.datetime.now()
-		self.cb.bufferToConsole(bForceFullRepaint=True)
+		self.cb.bufferToConsole(self.x, self.y, bForceFullRepaint=True)
 		t2 = datetime.datetime.now()
 
 		#time.sleep(0.001)
@@ -88,7 +96,7 @@ class Effect1(object):
 
 	def runForever(self):
 		while True:
-			self.runOneLoop()
+			self.runLoopOnce()
 	#
 
 #
