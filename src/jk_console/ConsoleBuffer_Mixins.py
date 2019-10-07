@@ -100,8 +100,11 @@ class ConsoleBuffer_Mixins:
 		assert len(text) > 0
 
 		i = 0
+		row = self._data[y]
 		for c in text:
-			cell = self._data[y][x + i]
+			if (x + i) >= len(row):
+				break
+			cell = row[x + i]
 			cell.c = c
 			if color != None:
 				cell.col = color

@@ -1,7 +1,7 @@
 {
 	"language": "python3",
 	"name": "jk_console",
-	"version": "0.2019.10.2",
+	"version": "0.2019.10.7",
 	"meta": {
 		"description": "This python module provides a variety of essential functions for implementing versatile programs using the console. (Please have a look at the documentation for details.)",
 		"keywords": [
@@ -33,7 +33,8 @@
 	"source": {
 		"packages": [
 			"jk_console",
-			"jk_console.viewport"
+			"jk_console.viewport",
+			"jk_console.demo"
 		],
 		"extra_data_files": [
 		]
