@@ -21,4 +21,4 @@ from .EventCollector import EventCollector
 
 
 
-__version__ = "0.2019.10.11.6"
+__version__ = "0.2019.11.6"
