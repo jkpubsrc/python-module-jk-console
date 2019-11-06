@@ -24,7 +24,7 @@ setup(
 		"License :: OSI Approved :: Apache Software License",
 	],
 	description = "This python module provides a variety of essential functions for implementing versatile programs using the console. (Please have a look at the documentation for details.)",
-	download_url = "https://github.com/jkpubsrc/python-module-jk-htmlparser/tarball/0.2019.10.7.1",
+	download_url = "https://github.com/jkpubsrc/python-module-jk-htmlparser/tarball/0.2019.10.11.6",
 	include_package_data = False,
 	install_requires = [
 	],
@@ -42,7 +42,7 @@ setup(
 		"jk_console.demo",
 	],
 	url = "https://github.com/jkpubsrc/python-module-jk-htmlparser",
-	version = "0.2019.10.7.1",
+	version = "0.2019.10.11.6",
 	zip_safe = False,
 	long_description = readme(),
 	long_description_content_type="text/markdown",

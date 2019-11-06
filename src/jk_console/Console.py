@@ -418,8 +418,8 @@ class Console(object):
 		KEY_CTRL_ALT_RIGHT		= "\x1b\x5b\x31\x3b\x37\x43"
 		KEY_CTRL_ALT_UP			= "\x1b\x5b\x31\x3b\x37\x41"
 		KEY_CTRL_ALT_DOWN		= "\x1b\x5b\x31\x3b\x37\x42"
-		KEY_HOME				= "\x1b\x5b\x48"
-		KEY_END					= "\x1b\x5b\x46"
+		#KEY_HOME				= "\x1b\x5b\x48"
+		#KEY_END					= "\x1b\x5b\x46"
 		KEY_CTRL_HOME			= "\x1b\x5b\x31\x3b\x35\x48"
 		KEY_CTRL_END			= "\x1b\x5b\x31\x3b\x35\x46"
 		KEY_DELETE				= "\x1b\x5b\x33\x7e"
@@ -538,8 +538,8 @@ class Console(object):
 			KEY_ALT_END: "Alt+End",
 			KEY_CTRL_HOME: "Ctrl+Home",
 			KEY_CTRL_END: "Ctrl+End",
-			KEY_HOME: "Home",
-			KEY_END: "End",
+			#KEY_HOME: "Home",
+			#KEY_END: "End",
 			KEY_DELETE: "Delete",
 			KEY_INSERT: "Insert",
 			KEY_F2: "F2",
