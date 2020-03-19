@@ -16,8 +16,9 @@ def readchar(blocking=False):
     return ch.decode()
 #
 
-
-
+def readchar_loop():
+	raise NotImplementedError()
+#
 
 
 

@@ -13,6 +13,7 @@ import sys
 import signal
 
 from .readchar import readchar as _readchar
+from .readchar import readchar_loop as _readchar_loop
 
 
 
@@ -292,6 +293,14 @@ class Console(object):
 		"""
 
 		@staticmethod
+		def rgb(rgb:int):
+			r = (rgb // 65536) % 256
+			g = (rgb // 256) % 256
+			b = rgb % 256
+			return "\033[48;2;" + str(r) + ";" + str(g) + ";" + str(b) + "m"
+		#
+
+		@staticmethod
 		def rgb256(r:int, g:int, b:int):
 			if (r < 0) or (r > 255):
 				raise Exception("Red value must be a valid integer value! (Value specified: " + str(r) + ")")
@@ -382,6 +391,8 @@ class Console(object):
 		KEY_TAB					= "\x09"
 		KEY_BACKSPACE			= "\x7f"
 		KEY_ENTER				= "\x0d"
+		KEY_ALT_ENTER			= "\x1b\x0a"
+		KEY_CTRL_ENTER			= "\x0a"
 		KEY_CTRL_BREAK			= "\x03"		# same as KEY_CTRL_C
 		KEY_ESCAPE_ESCAPE		= "\x1b\x1b"
 		KEY_CURSOR_LEFT			= "\x1b\x5b\x44"
@@ -390,8 +401,10 @@ class Console(object):
 		KEY_CURSOR_DOWN			= "\x1b\x5b\x42"
 		KEY_PAGE_UP				= "\x1b\x5b\x35\x7e"
 		KEY_PAGE_DOWN			= "\x1b\x5b\x36\x7e"
-		KEY_HOME				= "\x1b\x4f\x48"
-		KEY_END					= "\x1b\x4f\x46"
+		KEY_HOME_1				= "\x1b\x4f\x48"
+		KEY_HOME_2				= "\x1b\x5b\x48"
+		KEY_END_1				= "\x1b\x4f\x46"
+		KEY_END_2				= "\x1b\x5b\x46"
 		KEY_HOME_NUMPAD			= "\x1b\x5b\x31\x7e"		#(numpad)
 		KEY_END_NUMPAD			= "\x1b\x5b\x34\x7e"		#(numpad)
 		#KEY_SHIFT_CURSOR_LEFT	= "\x1b\x5b\x44\x32\x44"
@@ -418,12 +431,11 @@ class Console(object):
 		KEY_CTRL_ALT_RIGHT		= "\x1b\x5b\x31\x3b\x37\x43"
 		KEY_CTRL_ALT_UP			= "\x1b\x5b\x31\x3b\x37\x41"
 		KEY_CTRL_ALT_DOWN		= "\x1b\x5b\x31\x3b\x37\x42"
-		#KEY_HOME				= "\x1b\x5b\x48"
-		#KEY_END					= "\x1b\x5b\x46"
 		KEY_CTRL_HOME			= "\x1b\x5b\x31\x3b\x35\x48"
 		KEY_CTRL_END			= "\x1b\x5b\x31\x3b\x35\x46"
 		KEY_DELETE				= "\x1b\x5b\x33\x7e"
 		KEY_INSERT				= "\x1b\x5b\x32\x7e"
+		KEY_F1					= "\x1b\x4f\x50"
 		KEY_F2					= "\x1b\x4f\x51"
 		KEY_F3					= "\x1b\x4f\x52"
 		KEY_F4					= "\x1b\x4f\x53"
@@ -432,6 +444,7 @@ class Console(object):
 		KEY_F7					= "\x1b\x5b\x31\x38\x7e"
 		KEY_F8					= "\x1b\x5b\x31\x39\x7e"
 		KEY_F9					= "\x1b\x5b\x32\x30\x7e"
+		KEY_F10					= "\x1b\x5b\x32\x31\x7e"
 		KEY_F12					= "\x1b\x5b\x32\x34\x7e"
 		KEY_CTRL_F1				= "\x1b\x5b\x31\x3b\x35\x50"
 		KEY_CTRL_F2				= "\x1b\x5b\x31\x3b\x35\x51"
@@ -511,6 +524,8 @@ class Console(object):
 			KEY_TAB: "Tab",
 			KEY_BACKSPACE: "Backspace",
 			KEY_ENTER: "Enter",
+			KEY_ALT_ENTER: "Alt+Enter",
+			KEY_CTRL_ENTER: "Ctrl+Enter",
 			KEY_ESCAPE_ESCAPE: "ESC,ESC",
 			KEY_CURSOR_LEFT: "CursorLeft",
 			KEY_CURSOR_RIGHT: "CursorRight",
@@ -518,8 +533,10 @@ class Console(object):
 			KEY_CURSOR_DOWN: "CursorDown",
 			KEY_PAGE_UP: "PageUp",
 			KEY_PAGE_DOWN: "PageDown",
-			KEY_HOME: "Home",
-			KEY_END: "End",
+			KEY_HOME_1: "Home",
+			KEY_HOME_2: "Home",
+			KEY_END_1: "End",
+			KEY_END_2: "End",
 			KEY_HOME_NUMPAD: "Home(Numpad)",
 			KEY_END_NUMPAD: "End(Numpad)",
 			KEY_CTRL_PAGE_UP: "Ctrl+PageUp",
@@ -538,10 +555,9 @@ class Console(object):
 			KEY_ALT_END: "Alt+End",
 			KEY_CTRL_HOME: "Ctrl+Home",
 			KEY_CTRL_END: "Ctrl+End",
-			#KEY_HOME: "Home",
-			#KEY_END: "End",
 			KEY_DELETE: "Delete",
 			KEY_INSERT: "Insert",
+			KEY_F1: "F1",
 			KEY_F2: "F2",
 			KEY_F3: "F3",
 			KEY_F4: "F4",
@@ -550,6 +566,7 @@ class Console(object):
 			KEY_F7: "F7",
 			KEY_F8: "F8",
 			KEY_F9: "F9",
+			KEY_F10: "F10",
 			KEY_F12: "F12",
 			KEY_CTRL_ALT_HOME: "Ctrl+Alt+Home",
 			KEY_CTRL_ALT_END: "Ctrl+Alt+End",
@@ -566,18 +583,20 @@ class Console(object):
 			KEY_CTRL_Y, KEY_CTRL_X, KEY_CTRL_C, KEY_CTRL_V, KEY_CTRL_B, KEY_CTRL_A, KEY_CTRL_S, KEY_CTRL_D, KEY_CTRL_F, KEY_CTRL_G,
 			KEY_CTRL_H, KEY_CTRL_K, KEY_CTRL_L, KEY_CTRL_Q, KEY_CTRL_W, KEY_CTRL_E, KEY_CTRL_R, KEY_CTRL_T, KEY_CTRL_Z, KEY_CTRL_U,
 			KEY_CTRL_O, KEY_CTRL_P, KEY_CTRL_J,
-			KEY_SHIFT_TAB, KEY_TAB, KEY_BACKSPACE, KEY_ENTER, KEY_ESCAPE_ESCAPE,
+			KEY_SHIFT_TAB, KEY_TAB, KEY_BACKSPACE, KEY_ENTER, KEY_ALT_ENTER, KEY_CTRL_ENTER, KEY_ESCAPE_ESCAPE,
 			KEY_CURSOR_LEFT, KEY_CURSOR_RIGHT, KEY_CURSOR_UP, KEY_CURSOR_DOWN, KEY_PAGE_DOWN, KEY_PAGE_UP,
-			KEY_HOME, KEY_END, KEY_HOME_NUMPAD, KEY_END_NUMPAD, KEY_CTRL_PAGE_DOWN, KEY_CTRL_PAGE_UP,
+			KEY_HOME_1, KEY_HOME_2, KEY_END_1, KEY_END_2, KEY_HOME_NUMPAD, KEY_END_NUMPAD, KEY_CTRL_PAGE_DOWN, KEY_CTRL_PAGE_UP,
 			KEY_CTRL_CURSOR_DOWN, KEY_CTRL_CURSOR_LEFT, KEY_CTRL_CURSOR_RIGHT, KEY_CTRL_CURSOR_UP,
-			KEY_DELETE, KEY_INSERT, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F12,
-			KEY_CTRL_F1, KEY_CTRL_F2, KEY_CTRL_F3, KEY_CTRL_F4, KEY_CTRL_F5, KEY_CTRL_F6,
-			KEY_CTRL_F7, KEY_CTRL_F8, KEY_CTRL_F9, KEY_CTRL_F10, KEY_CTRL_F11, KEY_CTRL_F12,
-			KEY_SHIFT_F1, KEY_SHIFT_F2, KEY_SHIFT_F3, KEY_SHIFT_F4, KEY_SHIFT_F5, KEY_SHIFT_F6,
-			KEY_SHIFT_F7, KEY_SHIFT_F8, KEY_SHIFT_F9, KEY_SHIFT_F11, KEY_SHIFT_F12,
+			KEY_DELETE, KEY_INSERT,
+			KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7,
+			KEY_F8, KEY_F9, KEY_F10, KEY_F12,
+			KEY_CTRL_F1, KEY_CTRL_F2, KEY_CTRL_F3, KEY_CTRL_F4, KEY_CTRL_F5, KEY_CTRL_F6, KEY_CTRL_F7,
+			KEY_CTRL_F8, KEY_CTRL_F9, KEY_CTRL_F10, KEY_CTRL_F11, KEY_CTRL_F12,
+			KEY_SHIFT_F1, KEY_SHIFT_F2, KEY_SHIFT_F3, KEY_SHIFT_F4, KEY_SHIFT_F5, KEY_SHIFT_F6, KEY_SHIFT_F7,
+			KEY_SHIFT_F8, KEY_SHIFT_F9, KEY_SHIFT_F11, KEY_SHIFT_F12,
 			KEY_ALT_CURSOR_DOWN, KEY_ALT_CURSOR_LEFT, KEY_ALT_CURSOR_RIGHT, KEY_ALT_CURSOR_UP,
 			KEY_ALT_CURSOR_PAGE_UP, KEY_ALT_CURSOR_PAGE_DOWN, KEY_ALT_HOME, KEY_ALT_END,
-			KEY_CTRL_HOME, KEY_CTRL_END, KEY_HOME, KEY_END,
+			KEY_CTRL_HOME, KEY_CTRL_END,
 			KEY_CTRL_ALT_HOME, KEY_CTRL_ALT_END, KEY_CTRL_ALT_LEFT, KEY_CTRL_ALT_RIGHT, KEY_CTRL_ALT_UP, KEY_CTRL_ALT_DOWN,
 			MOUSE_EVENT, MOUSE_EVENT_2,
 		])
@@ -595,7 +614,7 @@ class Console(object):
 		#					been pressed.
 		#
 		@staticmethod
-		def readKey():
+		def readKey() -> str:
 			tree = Console.Input._TREE
 
 			dataRead = ""
@@ -621,6 +640,80 @@ class Console(object):
 				else:
 					return dataRead
 		#
+
+		#
+		# Read a single character from STDIN. (This keyboard character can be expressed by multiple characters.)
+		#
+		# @return	str		Returns a string. If the string contains a single character this will be an ordinary character. Otherwise
+		#					the key pressed was a special character. Use the constants defined in this class for checking what key has
+		#					been pressed.
+		#
+		@staticmethod
+		def produceEventsLoop():
+			dataRead = ""
+			inTree = Console.Input._TREE
+			bInMouse = False
+			mouseBuffer = ""
+			mouseMask = [ False, False, False ]
+			for c in _readchar_loop():
+				if bInMouse:
+					# we're within a mouse event
+					if c == "M":
+						# termination of mouse down event
+						bInMouse = False
+						_tmp = [ int(x) for x in mouseBuffer.split(";") ]
+						if _tmp[0] == 64:
+							yield "mouse_wheel", "up", None
+						elif _tmp[0] == 65:
+							yield "mouse_wheel", "down", None
+						else:
+							if mouseMask[_tmp[0]]:
+								yield "mouse_drag", _tmp, None
+							else:
+								mouseMask[_tmp[0]] = True
+								yield "mouse_down", _tmp, None
+					if c == "m":
+						# termination of mouse up event
+						bInMouse = False
+						_tmp = [ int(x) for x in mouseBuffer.split(";") ]
+						if _tmp[0] == 64:
+							yield "mouse_wheel", "up", None
+						elif _tmp[0] == 65:
+							yield "mouse_wheel", "down", None
+						else:
+							mouseMask[_tmp[0]] = False
+							yield "mouse_up", _tmp, None
+					else:
+						# continue mouse event
+						mouseBuffer += c
+					continue
+				else:
+					# we're within a regular event
+					nextTreeNode = inTree.get(c)
+					if nextTreeNode is None:
+						# not in tree
+						for c2 in dataRead:
+							yield "key", c2, Console.Input.ALL_KEYS_TO_KEY_NAME.get(c2)
+						dataRead = ""
+						yield "key", c, Console.Input.ALL_KEYS_TO_KEY_NAME.get(c)
+						inTree = Console.Input._TREE
+					else:
+						# in tree
+						dataRead += c
+						if isinstance(nextTreeNode, dict):
+							# branching node
+							inTree = nextTreeNode
+						else:
+							# data node
+							if (dataRead == Console.Input.MOUSE_EVENT) or (dataRead == Console.Input.MOUSE_EVENT_2):
+								bInMouse = True
+								mouseBuffer = ""
+							else:
+								bInMouse = False
+								yield "key", dataRead, Console.Input.ALL_KEYS_TO_KEY_NAME.get(dataRead)
+							dataRead = ""
+							inTree = Console.Input._TREE
+			#
 
 		@staticmethod
 		def readKeyWithTimeout(timeoutSeconds:int = 1):
@@ -765,8 +858,8 @@ class Console(object):
 	#
 	@staticmethod
 	def clear():
-		#os.system('cls' if os.name == 'nt' else 'clear')
-		print("\u001Bc")
+		os.system('cls' if os.name == 'nt' else 'clear')
+		#print("\u001Bc")	# this does not seem to work properly sometimes :-/
 	#
 
 	@staticmethod

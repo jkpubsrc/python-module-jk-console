@@ -56,6 +56,14 @@ class IntRGB(object):
 	#
 
 	@staticmethod
+	def toCSS(rgb:int) -> str:
+		r = (rgb // 65536) % 256
+		g = (rgb // 256) % 256
+		b = rgb % 256
+		return "#%0x%0x%0x" % (r, g, b)
+	#
+
+	@staticmethod
 	def rgb256(r:int, g:int, b:int):
 		if (r < 0) or (r > 255):
 			raise Exception("Red value must be a valid integer value! (Value specified: " + str(r) + ")")
@@ -113,6 +121,53 @@ class IntRGB(object):
 #
 
 
+
+IntRGB.BLACK = IntRGB.parseCSS("#000000")
+IntRGB.DARK_GRAY = IntRGB.parseCSS("#404040")
+IntRGB.GRAY = IntRGB.parseCSS("#808080")
+IntRGB.LIGHT_GRAY = IntRGB.parseCSS("#c0c0c0")
+IntRGB.WHITE = IntRGB.parseCSS("#ffffff")
+
+IntRGB.LIGHT_RED = IntRGB.parseCSS("#ff8080")
+IntRGB.RED = IntRGB.parseCSS("#ff0000")
+IntRGB.DARK_RED = IntRGB.parseCSS("#800000")
+
+IntRGB.LIGHT_GREEN = IntRGB.parseCSS("#80ff80")
+IntRGB.GREEN = IntRGB.parseCSS("#00ff00")
+IntRGB.DARK_GREEN = IntRGB.parseCSS("#008000")
+
+IntRGB.LIGHT_BLUE = IntRGB.parseCSS("#8080ff")
+IntRGB.BLUE = IntRGB.parseCSS("#0000ff")
+IntRGB.DARK_BLUE = IntRGB.parseCSS("#000080")
+
+IntRGB.LIGHT_YELLOW = IntRGB.parseCSS("#ffff80")
+IntRGB.YELLOW = IntRGB.parseCSS("#ffff00")
+IntRGB.DARK_YELLOW = IntRGB.parseCSS("#808000")
+
+IntRGB.LIGHT_VIOLET = IntRGB.parseCSS("#ff80ff")
+IntRGB.VIOLET = IntRGB.parseCSS("#ff00ff")
+IntRGB.DARK_VIOLET = IntRGB.parseCSS("#800080")
+
+IntRGB.LIGHT_CYAN = IntRGB.parseCSS("#80ffff")
+IntRGB.CYAN = IntRGB.parseCSS("#00ffff")
+IntRGB.DARK_CYAN = IntRGB.parseCSS("#008080")
+
+IntRGB.LIGHT_ORANGE = IntRGB.parseCSS("#ffc080")
+IntRGB.ORANGE = IntRGB.parseCSS("#ff8000")
+IntRGB.DARK_ORANGE = IntRGB.parseCSS("#804000")
+
+IntRGB.LIGHT_BROWN = IntRGB.parseCSS("#c06000")
+IntRGB.BROWN = IntRGB.parseCSS("#804000")
+IntRGB.DARK_BROWN = IntRGB.parseCSS("#502800")
+
+#IntRGB.NAVY = IntRGB.DARK_BLUE
+#IntRGB.AQUA = IntRGB.CYAN
+#IntRGB.TEAL = IntRGB.DARK_CYAN
+#IntRGB.LIME = IntRGB.GREEN
+#IntRGB.FUCHSIA = IntRGB.VIOLET
+#IntRGB.PURPLE = IntRGB.DARK_VIOLET
+#IntRGB.OLIVE = IntRGB.DARK_YELLOW
+#IntRGB.SILVER = IntRGB.LIGHT_GRAY
 
 
 

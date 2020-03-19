@@ -79,6 +79,8 @@ class ConsoleBufferRGB(ConsoleBufferRGB_Mixins):
 			self.__compileColor = self.__compileColorWithoutCaching
 
 		#self._Mixins_init()
+
+		self.defaultFramedBoxSettings = FramedBoxSettingsRGB()
 	#
 
 	def clearInternalCache(self):
@@ -141,7 +143,7 @@ class ConsoleBufferRGB(ConsoleBufferRGB_Mixins):
 	#
 
 	#
-	# Convert the rgb color valus to a string
+	# Convert the rgb color values to a string
 	#
 	def __compileColorWithCaching(self, bgRGB:int, fgRGB:int):
 		s = ""
@@ -161,7 +163,7 @@ class ConsoleBufferRGB(ConsoleBufferRGB_Mixins):
 	#
 
 	#
-	# Convert the rgb color valus to a string
+	# Convert the rgb color values to a string
 	#
 	def __compileColorWithoutCaching(self, bgRGB:int, fgRGB:int):
 		s = ""

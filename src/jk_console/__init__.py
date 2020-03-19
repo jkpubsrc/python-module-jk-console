@@ -1,6 +1,8 @@
 ﻿
 
 
+__version__ = "0.2020.3.19"
+
 
 
 from .Rect import Rect
@@ -10,15 +12,12 @@ from .ConsoleBuffer import ConsoleBuffer		# console buffer: cells with color ASC
 from .ConsoleBufferWO import ConsoleBufferWO	# simple version of ConsoleBuffer without modification flag
 from .CharacterBuffer import CharacterBuffer	# int-based RGB values
 from .IntRGB import IntRGB
-from .ConsoleBufferRGB import ConsoleBufferRGB
+from .ConsoleBufferRGB import ConsoleBufferRGB, FramedBoxSettingsRGB
 from .SimpleTable import SimpleTable, SimpleTableCell, SimpleTableColumn, SimpleTableRow, SimpleTableConstants
 from .EventCollector import EventCollector
+from .FramedBoxSettingsRGB import FramedBoxSettingsRGB
+from .ConsoleBufferRGB2 import ConsoleBufferRGB2
 
 
 
 
-
-
-
-
-__version__ = "0.2019.11.6"

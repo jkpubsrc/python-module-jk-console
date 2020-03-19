@@ -372,7 +372,7 @@ class SimpleTable(SimpleTableConstants):
 
 	def addEmptyRow(self):
 		if len(self.__rows):
-			if (self.__rows[-1]):
+			if self.__rows[-1]:
 				self.addRow()
 	#
 
