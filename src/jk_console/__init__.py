@@ -1,7 +1,7 @@
 ﻿
 
 
-__version__ = "0.2020.3.19"
+__version__ = "0.2020.3.20"
 
 
 
@@ -17,7 +17,6 @@ from .SimpleTable import SimpleTable, SimpleTableCell, SimpleTableColumn, Simple
 from .EventCollector import EventCollector
 from .FramedBoxSettingsRGB import FramedBoxSettingsRGB
 from .ConsoleBufferRGB2 import ConsoleBufferRGB2
-
 
 
 

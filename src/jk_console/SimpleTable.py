@@ -263,6 +263,7 @@ class SimpleTable(SimpleTableConstants):
 			rowCells = [ prefix ]
 			data = []
 			for nColumn in range(0, len(columnWidths)):
+				bIsLastColumn = nColumn == (len(columnWidths) - 1)
 				column = self.column(nColumn)
 				halign, color, textTransform, text = self.__getCellData(row, column, row[nColumn])
 				if not useColors:
@@ -277,7 +278,8 @@ class SimpleTable(SimpleTableConstants):
 				if column.vlineAfterColumn:
 					rowCells.append(vLineChar)
 				else:
-					rowCells.append(gapChar)
+					if not bIsLastColumn:
+						rowCells.append(gapChar)
 
 				data.append((nColumn, column, text))
 
