@@ -15,14 +15,29 @@
 # http://code.activestate.com/recipes/134892/
 # So real authors are DannyYoo and company.
 
+#
+# This code was heavily modified by Jürgen Knauth.
+#
+# Please note that right now `readkeydata_loop()` is the ONLY function that really works reliably if reading data from STDIN for key or mouse event processing.
+# Please also note that `readkeydata_loop()` returns a byte array with the current key data available.
+#
+# Many thanks to:
+# * https://stackoverflow.com/questions/21791621/taking-input-from-sys-stdin-non-blocking
+#
+
+
+
+
+
+
 import sys
 
 if sys.platform.startswith('linux'):
-    from .readchar_linux import readchar, readchar_loop
+    from .readchar_linux import readchar, readchar_loop, readkeydata_loop
 elif sys.platform == 'darwin':
-    from .readchar_linux import readchar, readchar_loop
+    from .readchar_linux import readchar, readchar_loop, readkeydata_loop
 elif sys.platform in ('win32', 'cygwin'):
-    from .readchar_windows import readchar, readchar_loop
+    from .readchar_windows import readchar, readchar_loop, readkeydata_loop
 else:
     raise NotImplementedError('The platform %s is not supported yet' % sys.platform)
 

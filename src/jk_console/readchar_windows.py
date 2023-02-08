@@ -20,6 +20,9 @@ def readchar_loop():
 	raise NotImplementedError()
 #
 
+def readkeydata_loop():
+	raise NotImplementedError()
+#
 
 
 

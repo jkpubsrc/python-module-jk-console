@@ -1,0 +1,48 @@
+{
+	"magic": {
+		"magic": "packageinfo",
+		"version": 2
+	},
+	"meta": {
+		"authors": [
+			{
+				"email": "pubsrc@binary-overflow.de",
+				"name": "J\u00fcrgen Knauth"
+			}
+		],
+		"description": "This python module provides a variety of essential functions for implementing versatile programs using the console. (Please have a look at the documentation for details.)",
+		"development_status": "stable",
+		"keywords": [
+			"console",
+			"terminal",
+			"colors",
+			"stdin"
+		],
+		"language": "python3",
+		"license": "Apache2",
+		"name": "jk_console",
+		"packageClass": "python-module",
+		"version": "0.2023.2.8"
+	},
+	"requirements": {
+		"htmlcssjs_packages": [],
+		"python_packages": [
+			{
+				"import": "msvcrt",
+				"os": "windows"
+			}
+		],
+		"python_packages_dev": [],
+		"python_packages_recommended": [],
+		"system_apt_packages": []
+	},
+	"source": {
+		"extra_binary_files": [],
+		"extra_data_files": [],
+		"packages": [
+			"jk_console",
+			"jk_console.viewport",
+			"jk_console.demo"
+		]
+	}
+}

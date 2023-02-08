@@ -1,7 +1,11 @@
 
 
 
+import typing
+
 from .Console import Console
+
+
 
 
 
@@ -25,21 +29,38 @@ class SimpleTableCell(SimpleTableConstants):
 	def __init__(self, table):
 		self.__table = table
 		self.halign = None
-		self.value = None
+		self.__value = None
+		self.__len:int = -1
 		self.color = None
 		self.textTransform = None
 	#
 
+	@property
+	def value(self):
+		return self.__value
+	#
+
+	@value.setter
+	def value(self, value) -> None:
+		self.__value = value
+		self.__len = -1
+	#
+
 	def __str__(self):
-		if self.value is None:
+		if self.__value is None:
 			return ""
 		else:
-			return str(self.value)
+			return str(self.__value)
 	#
 
 	def __len__(self):
-		s = self.__str__()
-		return len(s)
+		if self.__len < 0:
+			if self.__value is None:
+				self.__len = 0
+			else:
+				self.__len = len(Console.stripESCSequences(str(self.__value)))
+
+		return self.__len
 	#
 
 #
@@ -112,7 +133,7 @@ class SimpleTableRow(SimpleTableConstants):
 		table._getColumnsList(0).append(self)
 		self.halign = None
 		self.color = None
-		self.textTransform = None
+		self.textTransform:int = None
 		self.hlineAfterRow = False
 	#
 
@@ -133,7 +154,7 @@ class SimpleTableRow(SimpleTableConstants):
 		self.__table._getColumnsList(len(self.__cells)).append(self)
 	#
 
-	def __getitem__(self, index:int):
+	def __getitem__(self, index:int) -> typing.Union[SimpleTableCell,None]:
 		assert isinstance(index, int)
 		if index >= len(self.__cells):
 			return None
@@ -163,14 +184,14 @@ class SimpleTableRow(SimpleTableConstants):
 class SimpleTable(SimpleTableConstants):
 
 	def __init__(self):
-		self.__rows = []
-		self.__columns = {}
-		self.__nColumns = {
+		self.__rows:typing.List[SimpleTableRow] = []
+		self.__columns:typing.Dict[int,SimpleTableColumn] = {}
+		self.__nColumns:typing.Dict[int,typing.List[SimpleTableRow]] = {
 			0: []
 		}
 	#
 
-	def _getColumnsList(self, n:int):
+	def _getColumnsList(self, n:int) -> typing.List[SimpleTableRow]:
 		cols = self.__nColumns.get(n)
 		if cols is None:
 			cols = []
@@ -200,7 +221,10 @@ class SimpleTable(SimpleTableConstants):
 		return len(self.__rows)
 	#
 
-	def __getColumnWidth(self, nColumn:int) -> int:
+	#
+	# Calculate the width of the specific column.
+	#
+	def _getColumnWidth(self, nColumn:int) -> int:
 		cells = self.__getColumnCells(nColumn)
 		if cells:
 			return max([ (len(c) if c else 0) for c in cells ])
@@ -208,11 +232,14 @@ class SimpleTable(SimpleTableConstants):
 			return 0
 	#
 
-	def __getColumnWidths(self) -> list:
-		return [ self.__getColumnWidth(n) for n in range(0, self.numberOfColumns) ]
+	#
+	# Calculate the width of all columns.
+	#
+	def _getColumnWidths(self) -> typing.List[int]:
+		return [ self._getColumnWidth(n) for n in range(0, self.numberOfColumns) ]
 	#
 
-	def column(self, nColumn:int):
+	def column(self, nColumn:int) -> SimpleTableColumn:
 		d = self.__columns.get(nColumn)
 		if d is None:
 			d = SimpleTableColumn(self, nColumn, self.__rows)
@@ -220,14 +247,14 @@ class SimpleTable(SimpleTableConstants):
 		return d
 	#
 
-	def row(self, nRow:int):
+	def row(self, nRow:int) -> SimpleTableRow:
 		if (nRow >= len(self.__rows)) or (nRow < 0):
 			return None
 		return self.__rows[nRow]
 	#
 
-	def __getColumnCells(self, nColumn:int):
-		columnCells = []
+	def __getColumnCells(self, nColumn:int) -> typing.List[SimpleTableCell]:
+		columnCells:typing.List[SimpleTableCell] = []
 		for row in self.__rows:
 			columnCells.append(row[nColumn])
 		return columnCells
@@ -250,14 +277,20 @@ class SimpleTable(SimpleTableConstants):
 	#
 	# Print the table.
 	#
-	def printToLines(self, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", useColors:bool = True):
+	def printToLines(self, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", useColors:bool = True) -> list:
 		outBuffer = []
 		self.__printToBuffer(outBuffer, prefix, gapChar, vLineChar, hLineChar, crossChar, useColors)
 		return outBuffer
 	#
 
+	def printToTextFile(self, filePath:str, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", useColors:bool = True):
+		with open(filePath, "w") as f:
+			f.write("\n".join(self.printToLines(prefix, gapChar, vLineChar, hLineChar, crossChar, useColors)))
+			f.write("\n")
+	#
+
 	def __printToBuffer(self, outBuffer:list, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", useColors:bool = True):
-		columnWidths = self.__getColumnWidths()
+		columnWidths = self._getColumnWidths()
 
 		for row in self.__rows:
 			rowCells = [ prefix ]
@@ -265,12 +298,12 @@ class SimpleTable(SimpleTableConstants):
 			for nColumn in range(0, len(columnWidths)):
 				bIsLastColumn = nColumn == (len(columnWidths) - 1)
 				column = self.column(nColumn)
-				halign, color, textTransform, text = self.__getCellData(row, column, row[nColumn])
+				halign, color, textTransform, text, textLen = self.__getCellData(row, column, row[nColumn])
 				if not useColors:
 					color = None
 				if color:
 					rowCells.append(color)
-				text = self.__hformatCellText(text, halign, textTransform, columnWidths[nColumn], column.marginLeft, column.marginRight)
+				text = self.__hformatCellText(text, textLen, halign, textTransform, columnWidths[nColumn], column.marginLeft, column.marginRight)
 				rowCells.append(text)
 				if color:
 					rowCells.append(Console.RESET)
@@ -301,33 +334,35 @@ class SimpleTable(SimpleTableConstants):
 				outBuffer.append("".join(rowCells))
 	#
 
-	def raw(self):
+	def raw(self) -> list:
 		ret = []
 
 		for row in self.__rows:
 			rowCells = []
 			for nColumn in range(0, self.numberOfColumns):
 				column = self.column(nColumn)
-				halign, color, textTransform, text = self.__getCellData(row, column, row[nColumn])
-				rowCells.append(self.__hformatCellText(text, None, textTransform, 0, 0, 0))
+				halign, color, textTransform, text, textLen = self.__getCellData(row, column, row[nColumn])
+				rowCells.append(self.__hformatCellText(text, textLen, None, textTransform, 0, 0, 0))
 			ret.append(rowCells)
 
 		return ret
 	#
 
-	def __getCellData(self, row:SimpleTableRow, column:SimpleTableColumn, cell:SimpleTableCell):
+	def __getCellData(self, row:SimpleTableRow, column:SimpleTableColumn, cell:SimpleTableCell) -> typing.Tuple[int,str,int,str,int]:
 		# collect data: cell vs. row vs. column
 
 		if cell:
 			s = str(cell)
-			halign = cell.halign
-			color = cell.color
-			textTransform = cell.textTransform
+			lenS:int = len(cell)
+			halign:int = cell.halign
+			color:str = cell.color
+			textTransform:int = cell.textTransform
 		else:
 			s = ""
-			halign = None
-			color = None
-			textTransform = None
+			lenS:int = 0
+			halign:int = None
+			color:str = None
+			textTransform:int = None
 
 		if halign is None:
 			halign = row.halign
@@ -344,38 +379,54 @@ class SimpleTable(SimpleTableConstants):
 		if textTransform is None:
 			textTransform = column.textTransform
 
-		return halign, color, textTransform, s
+		return halign, color, textTransform, s, lenS
 	#
 
-	def __hformatCellText(self, s:str, halign:int, textTransform:int, width:int, marginLeft:int, marginRight:int):
+	#
+	# @param		str text				(required) The text to format.
+	# @param		int textLen				(required) The length of the text in visible characters.
+	#										NOTE: We need this value as our text data might contain color codes and
+	#										calculating the real character length of this text data is quite expensive.
+	# @param		int halign				(required) Horizontal alignment
+	# @param		int textTransform		(required) Text transformation
+	# @param		int width				(required) Width in number of characters
+	# @param		int marginLeft			(required) Left margin in number of characters
+	# @param		int marginRight			(required) Right margin in number of characters
+	#
+	def __hformatCellText(self, text:str, textLen:int, halign:int, textTransform:int, width:int, marginLeft:int, marginRight:int) -> str:
 		if textTransform == SimpleTableConstants.CASE_LOWER:
-			s = s.lower()
+			text = text.lower()
 		elif textTransform == SimpleTableConstants.CASE_UPPER:
-			s = s.upper()
+			text = Console.colorSensitiveToUpper(text)
+			#text = text.upper()
 
 		if halign in [ None, SimpleTableConstants.HALIGN_LEFT ]:
-			s = s + " " * (width - len(s))
+			text = text + " " * (width - textLen)
 		elif halign == SimpleTableConstants.HALIGN_CENTER:
-			spc = " " * ((width - len(s)) // 2 + 1)
-			s = spc + s + spc
-			s = s[:width]
+			spc = " " * ((width - textLen) // 2 + 1)
+			text = spc + text + spc
+			text = text[:width]
 		elif halign == SimpleTableConstants.HALIGN_RIGHT:
-			s = " " * (width - len(s)) + s
+			text = " " * (width - textLen) + text
 		else:
 			raise Exception()
 
 		if marginLeft:
-			s = " " * marginLeft + s
+			text = " " * marginLeft + text
 		if marginRight:
-			s += " " * marginRight
+			text += " " * marginRight
 
-		return s
+		return text
 	#
 
-	def addEmptyRow(self):
-		if len(self.__rows):
-			if self.__rows[-1]:
-				self.addRow()
+	def addEmptyRow(self, bAddOnlyIfLastRowNotEmpty:bool = True) -> SimpleTableRow:
+		if bAddOnlyIfLastRowNotEmpty:
+			if len(self.__rows):
+				if self.__rows[-1]:
+					return self.addRow()
+			return None
+		else:
+			return self.addRow()
 	#
 
 #

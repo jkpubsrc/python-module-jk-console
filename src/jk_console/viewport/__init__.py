@@ -12,7 +12,3 @@ from .ViewPortRenderer import ViewPortRenderer as __vpr
 MAX_BRIGHTNESS = __vpr.MAX_BRIGHTNESS
 
 
-
-
-
-__version__ = "0.2019.11.6"

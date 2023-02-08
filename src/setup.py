@@ -19,14 +19,15 @@ setup(
 	author = "Jürgen Knauth",
 	author_email = "pubsrc@binary-overflow.de",
 	classifiers = [
-		"Development Status :: 4 - Beta",
+		"Development Status :: 5 - Production/Stable",
 		"Environment :: Console",
 		"License :: OSI Approved :: Apache Software License",
+		"Programming Language :: Python :: 3",
 	],
 	description = "This python module provides a variety of essential functions for implementing versatile programs using the console. (Please have a look at the documentation for details.)",
-	download_url = "https://github.com/jkpubsrc/python-module-jk-htmlparser/tarball/0.2019.11.6",
-	include_package_data = False,
+	include_package_data = True,
 	install_requires = [
+		# "msvcrt",
 	],
 	keywords = [
 		"console",
@@ -34,16 +35,21 @@ setup(
 		"colors",
 		"stdin",
 	],
-	license = "Apache 2.0",
+	license = "Apache2",
 	name = "jk_console",
+	package_data = {
+		"": [
+		],
+	},
 	packages = [
 		"jk_console",
 		"jk_console.viewport",
 		"jk_console.demo",
 	],
-	url = "https://github.com/jkpubsrc/python-module-jk-htmlparser",
-	version = "0.2019.11.6",
+	scripts = [
+	],
+	version = '0.2023.2.8',
 	zip_safe = False,
 	long_description = readme(),
-	long_description_content_type="text/markdown",
+	long_description_content_type = "text/markdown",
 )

@@ -11,6 +11,7 @@
 import os
 import sys
 import signal
+import typing
 
 from .readchar import readchar as _readchar
 from .readchar import readchar_loop as _readchar_loop
@@ -756,18 +757,23 @@ class Console(object):
 		return p
 	#
 
+	#
+	# Returns the current width and height of the terminal.
+	#
+	# @return		tuple<int,int>			Returns current (width, height) of the terminal.
+	#
 	@staticmethod
-	def getSize():
+	def getSize() -> tuple:
 		return os.get_terminal_size()
 	#
 
 	@staticmethod
-	def width():
+	def width() -> int:
 		return os.get_terminal_size()[0]
 	#
 
 	@staticmethod
-	def height():
+	def height() -> int:
 		return os.get_terminal_size()[1]
 	#
 
@@ -778,7 +784,7 @@ class Console(object):
 	# @return	int y		The row position (starting at zero).
 	#
 	@staticmethod
-	def getCursorPosition():
+	def getCursorPosition() -> typing.Tuple[int,int]:
 		print("\u001B[6n", end="", flush=True)
 		buf = ""
 		c = None
@@ -827,19 +833,53 @@ class Console(object):
 	#
 	@staticmethod
 	def stripESCSequences(text:str):
-		ret = ""
+		ret = []
+
 		i = 0
 		while i < len(text):
 			if text[i:].startswith('\033['):
-				# escape code found
+				# escape sequence found
 				i += 3
 				while text[i] != 'm':
 					i += 1
 			else:
 				# regular character found
-				ret += text[i]
+				ret.append(text[i])
 			i += 1
-		return ret
+
+		return "".join(ret)
+
+		# s = "".join(ret)
+		# print(repr(text), "=>", repr(s))
+		# return s
+	#
+
+	#
+	# Color sensitive version of "toupper()".
+	#
+	@staticmethod
+	def colorSensitiveToUpper(text:str):
+		ret = []
+
+		i = 0
+		while i < len(text):
+			if text[i:].startswith('\033['):
+				# escape sequence found
+				iStart = i
+				i += 3
+				while text[i] != 'm':
+					i += 1
+				ret.append(text[iStart:i+1])
+			else:
+				# regular character found
+				ret.append(text[i].upper())
+			i += 1
+
+		return "".join(ret)
+
+		# s = "".join(ret)
+		# print(repr(text), "=>", repr(s))
+		# return s
 	#
 
 	#
