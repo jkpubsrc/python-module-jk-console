@@ -62,9 +62,9 @@ ForeGround
 ### Color Constants
 
 * `str BLACK`
-* `str DARK_GREY`
-* `str GREY`
-* `str LIGHT_GREY`
+* `str DARK_GRAY`
+* `str GRAY`
+* `str LIGHT_GRAY`
 * `str WHITE`
 
 * `str RED`
@@ -145,9 +145,9 @@ BackGround
 ### Color Constants
 
 * `str BLACK`
-* `str DARK_GREY`
-* `str GREY`
-* `str LIGHT_GREY`
+* `str DARK_GRAY`
+* `str GRAY`
+* `str LIGHT_GRAY`
 * `str WHITE`
 
 * `str RED`

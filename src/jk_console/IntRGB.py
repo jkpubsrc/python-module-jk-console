@@ -3,56 +3,22 @@
 
 import re
 
+from .impl._parseCSS import parseCSS_toARGB
+
+
+
+
 
 
 
 class IntRGB(object):
-
-	_HEXVALS = "0123456789abcdef"
-	_P1 = re.compile(r"^#([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])$")
-	_P2 = re.compile(r"^#([0-9a-f])([0-9a-f])([0-9a-f])$")
-	_P3 = re.compile(r"^rgb\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*\)$")
 
 	#
 	# Parse CSS codes as used by web technologies
 	#
 	@staticmethod
 	def parseCSS(css:str):
-		css = css.lower()
-		m = IntRGB._P1.match(css)
-		if m:
-			sr = m.group(1)
-			sg = m.group(2)
-			sb = m.group(3)
-			r = (IntRGB._HEXVALS.index(sr[0]) << 4) + IntRGB._HEXVALS.index(sr[1])
-			g = (IntRGB._HEXVALS.index(sg[0]) << 4) + IntRGB._HEXVALS.index(sg[1])
-			b = (IntRGB._HEXVALS.index(sb[0]) << 4) + IntRGB._HEXVALS.index(sb[1])
-			return 0xff000000 | ((((r << 8) + g) << 8) + b)
-		m = IntRGB._P2.match(css)
-		if m:
-			sr = m.group(1)
-			sg = m.group(2)
-			sb = m.group(3)
-			r = IntRGB._HEXVALS.index(sr)
-			g = IntRGB._HEXVALS.index(sg)
-			b = IntRGB._HEXVALS.index(sb)
-			return 0xff000000 | ((((((((((r << 4) + r) << 4) + g) << 4) + g) << 4) + b) << 4) + b)
-		m = IntRGB._P3.match(css)
-		if m:
-			sr = m.group(1)
-			sg = m.group(2)
-			sb = m.group(3)
-			r = int(sr)
-			if r > 255:
-				raise Exception("Invalid red component in: " + repr(css))
-			g = int(sg)
-			if g > 255:
-				raise Exception("Invalid green component in: " + repr(css))
-			b = int(sb)
-			if b > 255:
-				raise Exception("Invalid blue component in: " + repr(css))
-			return 0xff000000 | ((((r << 8) + g) << 8) + b)
-		raise Exception("Not a CSS color string: " + repr(css))
+		return parseCSS_toARGB(css)
 	#
 
 	@staticmethod

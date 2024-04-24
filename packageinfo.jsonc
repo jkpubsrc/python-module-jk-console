@@ -22,7 +22,7 @@
 		"license": "Apache2",
 		"name": "jk_console",
 		"packageClass": "python-module",
-		"version": "0.2023.2.8"
+		"version": "0.2024.4.24"
 	},
 	"requirements": {
 		"htmlcssjs_packages": [],
@@ -30,6 +30,10 @@
 			{
 				"import": "msvcrt",
 				"os": "windows"
+			},
+			{
+				"import": "jk_terminal_essentials",
+				"version": ">= 0.2024.2.2",
 			}
 		],
 		"python_packages_dev": [],

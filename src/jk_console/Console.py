@@ -13,6 +13,9 @@ import sys
 import signal
 import typing
 
+import jk_terminal_essentials
+
+from .impl._parseCSS import parseCSS_to3Ints
 from .readchar import readchar as _readchar
 from .readchar import readchar_loop as _readchar_loop
 
@@ -49,9 +52,9 @@ class Console(object):
 
 	class ForeGround:
 		BLACK = None
-		DARK_GREY = None
-		GREY = None
-		LIGHT_GREY = None
+		DARK_GRAY = None
+		GRAY = None
+		LIGHT_GRAY = None
 		WHITE = None
 
 		RED = None
@@ -103,14 +106,14 @@ class Console(object):
 		DARK_CYAN = '\033[36m'
 		#WHITE = '\033[37m'
 		WHITE = "\033[38;2;255;255;255m"
-		DARK_GREY = '\033[90m'
+		DARK_GRAY = '\033[90m'
 		RED = '\033[91m'
 		GREEN = '\033[92m'
 		YELLOW = '\033[93m'
 		BLUE = '\033[94m'
 		PURPLE = '\033[95m'
 		CYAN = '\033[96m'
-		LIGHT_GREY = '\033[97m'
+		LIGHT_GRAY = '\033[97m'
 		#BLACK = '\033[98m'
 		"""
 
@@ -150,6 +153,9 @@ class Console(object):
 			(STD_WHITE, "STD_WHITE"),
 		)
 
+		#
+		# Construct the foreground color from the specified color name.
+		#
 		@staticmethod
 		def getByName(name:str):
 			for col, colID in Console.ForeGround.ALL_STD_COLORS:
@@ -158,8 +164,22 @@ class Console(object):
 			return None
 		#
 
+		#
+		# Construct the foreground color from the specified RGB data.
+		#
 		@staticmethod
-		def rgb256(r:int, g:int, b:int):
+		def rgb(rgb:int):
+			r = (rgb // 65536) % 256
+			g = (rgb // 256) % 256
+			b = rgb % 256
+			return "\033[38;2;" + str(r) + ";" + str(g) + ";" + str(b) + "m"
+		#
+
+		#
+		# Construct the foreground color from the specified RGB data.
+		#
+		@staticmethod
+		def rgb256(r:int, g:int, b:int) -> str:
 			if (r < 0) or (r > 255):
 				raise Exception("Red value must be a valid integer value! (Value specified: " + str(r) + ")")
 			if not isinstance(g, int) or (g < 0) or (g > 255):
@@ -169,8 +189,11 @@ class Console(object):
 			return "\033[38;2;" + str(r) + ";" + str(g) + ";" + str(b) + "m"
 		#
 
+		#
+		# Construct the foreground color from the specified RGB data.
+		#
 		@staticmethod
-		def rgb1(r:float, g:float, b:float):
+		def rgb1(r:float, g:float, b:float) -> str:
 			if not isinstance(g, (int, float)) or (r < 0) or (r > 1):
 				raise Exception("Red value must be a valid float value in the range [0..1]! (Value specified: " + str(r) + ")")
 			if not isinstance(g, (int, float)) or (g < 0) or (g > 1):
@@ -180,8 +203,11 @@ class Console(object):
 			return "\033[38;2;" + str(int(r * 255)) + ";" + str(int(g * 255)) + ";" + str(int(b * 255)) + "m"
 		#
 
+		#
+		# Construct the foreground color from the specified HSL data.
+		#
 		@staticmethod
-		def hsl1(h:float, s:float, l:float):
+		def hsl1(h:float, s:float, l:float) -> str:
 			if (h < 0) or (h > 1):
 				raise Exception("Hue value must be a valid float value in the range [0..1]!")
 			if (s < 0) or (s > 1):
@@ -198,13 +224,22 @@ class Console(object):
 			return "\033[38;2;" + str(int(r * 255)) + ";" + str(int(g * 255)) + ";" + str(int(b * 255)) + "m"
 		#
 
+		#
+		# Construct the foreground color from the specified CSS string.
+		#
+		@staticmethod
+		def css(cssStr:str) -> str:
+			r, g, b = parseCSS_to3Ints(cssStr)
+			return "\033[38;2;" + str(r) + ";" + str(g) + ";" + str(b) + "m"
+		#
+
 	#
 
 	class BackGround:
 		BLACK = None
-		DARK_GREY = None
-		GREY = None
-		LIGHT_GREY = None
+		DARK_GRAY = None
+		GRAY = None
+		LIGHT_GRAY = None
 		WHITE = None
 
 		RED = None
@@ -266,6 +301,9 @@ class Console(object):
 			(STD_LIGHTGRAY, "STD_LIGHTGRAY"),
 		)
 
+		#
+		# Construct the background color from the specified color name.
+		#
 		@staticmethod
 		def getByName(name:str):
 			for col, colID in Console.BackGround.ALL_STD_COLORS:
@@ -283,26 +321,32 @@ class Console(object):
 		DARK_PURPLE = '\033[45m'
 		DARK_CYAN = '\033[46m'
 		WHITE = '\033[47m'
-		DARK_GREY = '\033[100m'
+		DARK_GRAY = '\033[100m'
 		RED = '\033[101m'
 		GREEN = '\033[102m'
 		YELLOW = '\033[103m'
 		BLUE = '\033[104m'
 		PURPLE = '\033[105m'
 		CYAN = '\033[106m'
-		LIGHT_GREY = '\033[107m'
+		LIGHT_GRAY = '\033[107m'
 		"""
 
+		#
+		# Construct the background color from the specified RGB data.
+		#
 		@staticmethod
-		def rgb(rgb:int):
+		def rgb(rgb:int) -> str:
 			r = (rgb // 65536) % 256
 			g = (rgb // 256) % 256
 			b = rgb % 256
 			return "\033[48;2;" + str(r) + ";" + str(g) + ";" + str(b) + "m"
 		#
 
+		#
+		# Construct the background color from the specified RGB data.
+		#
 		@staticmethod
-		def rgb256(r:int, g:int, b:int):
+		def rgb256(r:int, g:int, b:int) -> str:
 			if (r < 0) or (r > 255):
 				raise Exception("Red value must be a valid integer value! (Value specified: " + str(r) + ")")
 			if (g < 0) or (g > 255):
@@ -312,8 +356,11 @@ class Console(object):
 			return "\033[48;2;" + str(r) + ";" + str(g) + ";" + str(b) + "m"
 		#
 
+		#
+		# Construct the background color from the specified RGB data.
+		#
 		@staticmethod
-		def rgb1(r:float, g:float, b:float):
+		def rgb1(r:float, g:float, b:float) -> str:
 			if not isinstance(g, (int, float)) or (r < 0) or (r > 1):
 				raise Exception("Red value must be a valid float value in the range [0..1]! (Value specified: " + str(r) + ")")
 			if not isinstance(g, (int, float)) or (g < 0) or (g > 1):
@@ -323,8 +370,11 @@ class Console(object):
 			return "\033[48;2;" + str(int(r * 255)) + ";" + str(int(g * 255)) + ";" + str(int(b * 255)) + "m"
 		#
 
+		#
+		# Construct the background color from the specified HSL data.
+		#
 		@staticmethod
-		def hsl1(h:float, s:float, l:float):
+		def hsl1(h:float, s:float, l:float) -> str:
 			if (h < 0) or (h > 1):
 				raise Exception("Hue value must be a valid float value in the range [0..1]! (h is " + str(h) + ")")
 			if (s < 0) or (s > 1):
@@ -339,6 +389,15 @@ class Console(object):
 			g = Console._hue2rgb(p, q, h)
 			b = Console._hue2rgb(p, q, h - 1/3)
 			return "\033[48;2;" + str(int(r * 255)) + ";" + str(int(g * 255)) + ";" + str(int(b * 255)) + "m"
+		#
+
+		#
+		# Construct the background color from the specified CSS string.
+		#
+		@staticmethod
+		def css(cssStr:str) -> str:
+			r, g, b = parseCSS_to3Ints(cssStr)
+			return "\033[48;2;" + str(r) + ";" + str(g) + ";" + str(b) + "m"
 		#
 
 	#
@@ -763,18 +822,18 @@ class Console(object):
 	# @return		tuple<int,int>			Returns current (width, height) of the terminal.
 	#
 	@staticmethod
-	def getSize() -> tuple:
-		return os.get_terminal_size()
+	def getSize() -> os.terminal_size:
+		return jk_terminal_essentials.getTerminalSize()
 	#
 
 	@staticmethod
 	def width() -> int:
-		return os.get_terminal_size()[0]
+		return jk_terminal_essentials.getTerminalSize()[0]
 	#
 
 	@staticmethod
 	def height() -> int:
-		return os.get_terminal_size()[1]
+		return jk_terminal_essentials.getTerminalSize()[1]
 	#
 
 	#
@@ -921,9 +980,9 @@ for key, value in Console.Input.ALL_KEYS_TO_KEY_NAME.items():
 
 
 Console.ForeGround.BLACK = Console.ForeGround.rgb256(0, 0, 0)
-Console.ForeGround.DARK_GREY = Console.ForeGround.rgb256(96, 96, 96)
-Console.ForeGround.GREY = Console.ForeGround.rgb256(128, 128, 128)
-Console.ForeGround.LIGHT_GREY = Console.ForeGround.rgb256(192, 192, 192)
+Console.ForeGround.DARK_GRAY = Console.ForeGround.rgb256(96, 96, 96)
+Console.ForeGround.GRAY = Console.ForeGround.rgb256(128, 128, 128)
+Console.ForeGround.LIGHT_GRAY = Console.ForeGround.rgb256(192, 192, 192)
 Console.ForeGround.WHITE = Console.ForeGround.rgb256(255, 255, 255)
 
 Console.ForeGround.RED = Console.ForeGround.rgb256(255, 0, 0)
@@ -967,9 +1026,9 @@ Console.ForeGround.LIGHT_VIOLETRED = Console.ForeGround.rgb256(255, 102, 178)
 
 
 Console.BackGround.BLACK = Console.BackGround.rgb256(0, 0, 0)
-Console.BackGround.DARK_GREY = Console.BackGround.rgb256(96, 96, 96)
-Console.BackGround.GREY = Console.BackGround.rgb256(128, 128, 128)
-Console.BackGround.LIGHT_GREY = Console.BackGround.rgb256(192, 192, 192)
+Console.BackGround.DARK_GRAY = Console.BackGround.rgb256(96, 96, 96)
+Console.BackGround.GRAY = Console.BackGround.rgb256(128, 128, 128)
+Console.BackGround.LIGHT_GRAY = Console.BackGround.rgb256(192, 192, 192)
 Console.BackGround.WHITE = Console.BackGround.rgb256(255, 255, 255)
 
 Console.BackGround.RED = Console.BackGround.rgb256(255, 0, 0)

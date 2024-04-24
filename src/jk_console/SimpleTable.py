@@ -137,6 +137,10 @@ class SimpleTableRow(SimpleTableConstants):
 		self.hlineAfterRow = False
 	#
 
+	def _removeColumn(self, nColumn:int):
+		del self.__cells[nColumn]
+	#
+
 	def addCell(self) -> SimpleTableCell:
 		c = SimpleTableCell(self.__table)
 		self.__table._getColumnsList(len(self.__cells)).remove(self)
@@ -183,29 +187,28 @@ class SimpleTableRow(SimpleTableConstants):
 
 class SimpleTable(SimpleTableConstants):
 
+	################################################################################################################################
+	## Constants
+	################################################################################################################################
+
+	################################################################################################################################
+	## Constructor
+	################################################################################################################################
+
 	def __init__(self):
 		self.__rows:typing.List[SimpleTableRow] = []
-		self.__columns:typing.Dict[int,SimpleTableColumn] = {}
+		self.__columns_cached:typing.Dict[int,SimpleTableColumn] = {}
+
+		# groups rows with the same number of columns under the same key.
+		# the reason for that is no longer known.
 		self.__nColumns:typing.Dict[int,typing.List[SimpleTableRow]] = {
 			0: []
 		}
 	#
 
-	def _getColumnsList(self, n:int) -> typing.List[SimpleTableRow]:
-		cols = self.__nColumns.get(n)
-		if cols is None:
-			cols = []
-			self.__nColumns[n] = cols
-		return cols
-	#
-
-	def addRow(self, *args) -> SimpleTableRow:
-		r = SimpleTableRow(self)
-		self.__rows.append(r)
-		if args:
-			r.addCells(*args)
-		return r
-	#
+	################################################################################################################################
+	## Public Properties
+	################################################################################################################################
 
 	@property
 	def numberOfColumns(self) -> int:
@@ -217,8 +220,16 @@ class SimpleTable(SimpleTableConstants):
 		return len(self.__rows)
 	#
 
-	def __len__(self):
-		return len(self.__rows)
+	################################################################################################################################
+	## Helper Methods
+	################################################################################################################################
+
+	def _getColumnsList(self, n:int) -> typing.List[SimpleTableRow]:
+		cols = self.__nColumns.get(n)
+		if cols is None:
+			cols = []
+			self.__nColumns[n] = cols
+		return cols
 	#
 
 	#
@@ -239,54 +250,11 @@ class SimpleTable(SimpleTableConstants):
 		return [ self._getColumnWidth(n) for n in range(0, self.numberOfColumns) ]
 	#
 
-	def column(self, nColumn:int) -> SimpleTableColumn:
-		d = self.__columns.get(nColumn)
-		if d is None:
-			d = SimpleTableColumn(self, nColumn, self.__rows)
-			self.__columns[nColumn] = d
-		return d
-	#
-
-	def row(self, nRow:int) -> SimpleTableRow:
-		if (nRow >= len(self.__rows)) or (nRow < 0):
-			return None
-		return self.__rows[nRow]
-	#
-
 	def __getColumnCells(self, nColumn:int) -> typing.List[SimpleTableCell]:
 		columnCells:typing.List[SimpleTableCell] = []
 		for row in self.__rows:
 			columnCells.append(row[nColumn])
 		return columnCells
-	#
-
-	#
-	# Print the table.
-	#
-	def print(self, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", printFunction = None, useColors:bool = True):
-		if printFunction is None:
-			printFunction = print
-
-		outBuffer = []
-		self.__printToBuffer(outBuffer, prefix, gapChar, vLineChar, hLineChar, crossChar, useColors)
-
-		for line in outBuffer:
-			printFunction(line)
-	#
-
-	#
-	# Print the table.
-	#
-	def printToLines(self, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", useColors:bool = True) -> list:
-		outBuffer = []
-		self.__printToBuffer(outBuffer, prefix, gapChar, vLineChar, hLineChar, crossChar, useColors)
-		return outBuffer
-	#
-
-	def printToTextFile(self, filePath:str, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", useColors:bool = True):
-		with open(filePath, "w") as f:
-			f.write("\n".join(self.printToLines(prefix, gapChar, vLineChar, hLineChar, crossChar, useColors)))
-			f.write("\n")
 	#
 
 	def __printToBuffer(self, outBuffer:list, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", useColors:bool = True):
@@ -332,20 +300,6 @@ class SimpleTable(SimpleTableConstants):
 						rowCells.append(rowGapHLine)
 
 				outBuffer.append("".join(rowCells))
-	#
-
-	def raw(self) -> list:
-		ret = []
-
-		for row in self.__rows:
-			rowCells = []
-			for nColumn in range(0, self.numberOfColumns):
-				column = self.column(nColumn)
-				halign, color, textTransform, text, textLen = self.__getCellData(row, column, row[nColumn])
-				rowCells.append(self.__hformatCellText(text, textLen, None, textTransform, 0, 0, 0))
-			ret.append(rowCells)
-
-		return ret
 	#
 
 	def __getCellData(self, row:SimpleTableRow, column:SimpleTableColumn, cell:SimpleTableCell) -> typing.Tuple[int,str,int,str,int]:
@@ -419,6 +373,83 @@ class SimpleTable(SimpleTableConstants):
 		return text
 	#
 
+	################################################################################################################################
+	## Public Methods
+	################################################################################################################################
+
+	################################################################################################################################
+	## Public Static Methods
+	################################################################################################################################
+
+	def addRow(self, *args) -> SimpleTableRow:
+		r = SimpleTableRow(self)
+		self.__rows.append(r)
+		if args:
+			r.addCells(*args)
+		return r
+	#
+
+	def __len__(self):
+		return len(self.__rows)
+	#
+
+	def column(self, nColumn:int) -> SimpleTableColumn:
+		d = self.__columns_cached.get(nColumn)
+		if d is None:
+			d = SimpleTableColumn(self, nColumn, self.__rows)
+			self.__columns_cached[nColumn] = d
+		return d
+	#
+
+	def row(self, nRow:int) -> SimpleTableRow:
+		if (nRow >= len(self.__rows)) or (nRow < 0):
+			return None
+		return self.__rows[nRow]
+	#
+
+	#
+	# Print the table.
+	#
+	def print(self, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", printFunction = None, useColors:bool = True):
+		if printFunction is None:
+			printFunction = print
+
+		outBuffer = []
+		self.__printToBuffer(outBuffer, prefix, gapChar, vLineChar, hLineChar, crossChar, useColors)
+
+		for line in outBuffer:
+			printFunction(line)
+	#
+
+	#
+	# Print the table.
+	#
+	def printToLines(self, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", useColors:bool = True) -> list:
+		outBuffer = []
+		self.__printToBuffer(outBuffer, prefix, gapChar, vLineChar, hLineChar, crossChar, useColors)
+		return outBuffer
+	#
+
+	def printToTextFile(self, filePath:str, prefix:str = "", gapChar = " ", vLineChar = "|", hLineChar = "-", crossChar = "|", useColors:bool = True):
+		with open(filePath, "w") as f:
+			f.write("\n".join(self.printToLines(prefix, gapChar, vLineChar, hLineChar, crossChar, useColors)))
+			f.write("\n")
+	#
+
+	def raw(self) -> list:
+		ret = []
+
+		for row in self.__rows:
+			rowCells = []
+			for nColumn in range(0, self.numberOfColumns):
+				column = self.column(nColumn)
+				halign, color, textTransform, text, textLen = self.__getCellData(row, column, row[nColumn])
+				rowCells.append(self.__hformatCellText(text, textLen, None, textTransform, 0, 0, 0))
+			ret.append(rowCells)
+
+		return ret
+	#
+
 	def addEmptyRow(self, bAddOnlyIfLastRowNotEmpty:bool = True) -> SimpleTableRow:
 		if bAddOnlyIfLastRowNotEmpty:
 			if len(self.__rows):
@@ -427,6 +458,20 @@ class SimpleTable(SimpleTableConstants):
 			return None
 		else:
 			return self.addRow()
+	#
+
+	def removeColumn(self, nColumn:int):
+		assert isinstance(nColumn, int)
+		assert 0 <= nColumn < self.numberOfColumns
+
+		self.__columns_cached.clear()
+
+		for row in self.__rows:
+			self._getColumnsList(len(row)).remove(row)
+		for row in self.__rows:
+			row._removeColumn(nColumn)
+		for row in self.__rows:
+			self._getColumnsList(len(row)).append(row)
 	#
 
 #
