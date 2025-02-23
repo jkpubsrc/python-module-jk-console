@@ -12,6 +12,11 @@ from ._Rect import _Rect
 
 
 
+
+
+
+_ConsoleBufferRGBCell = typing.NewType("_ConsoleBufferRGBCell", object)
+
 class _ConsoleBufferRGBCell(object):
 
 	def __init__(self, colorBG:int, colorFG:int):
@@ -24,7 +29,7 @@ class _ConsoleBufferRGBCell(object):
 		self.bChanged = False
 	#
 
-	def copyTo(self, other):
+	def copyTo(self, other:_ConsoleBufferRGBCell):
 		other.colBG = self.colBG
 		other.colFG = self.colFG
 		other.c = self.c
@@ -45,6 +50,17 @@ class _ConsoleBufferRGBCell(object):
 #
 class ConsoleBufferRGB(ConsoleBufferRGB_Mixins):
 
+	################################################################################################################################
+	## Constants
+	################################################################################################################################
+
+	################################################################################################################################
+	## Constructor
+	################################################################################################################################
+
+	#
+	# Constructor method.
+	#
 	def __init__(self, width:int = None, height:int = None, bgColor:int = None, bWithCaching:bool = True):
 		self._bgColor = bgColor
 		self._width = Console.width() - 1 if width is None else width
@@ -83,19 +99,9 @@ class ConsoleBufferRGB(ConsoleBufferRGB_Mixins):
 		self.defaultFramedBoxSettings = FramedBoxSettingsRGB()
 	#
 
-	def clearInternalCache(self):
-		if self._bWithCaching:
-			self.__colMapBG.clear()
-			self.__colMapFG.clear()
-	#
-
-	def __str__(self):
-		return "<ConsoleBufferRGB size=%dx%d at %x>" % (self._width, self._height, id(self))
-	#
-
-	def __repr__(self):
-		return "<ConsoleBufferRGB size=%dx%d at %x>" % (self._width, self._height, id(self))
-	#
+	################################################################################################################################
+	## Public Properties
+	################################################################################################################################
 
 	#
 	# Returns a tuple with two values: The width and height.
@@ -115,32 +121,9 @@ class ConsoleBufferRGB(ConsoleBufferRGB_Mixins):
 		return self._height
 	#
 
-	#
-	# Force full repaint for next rendering.
-	#
-	def fullRepaint(self):
-		self._bFullPaint = True
-	#
-
-	def bufferToBuffer(self, ofsX:int, ofsY:int, other, bForceFullRepaint:bool = False):
-		assert isinstance(other, ConsoleBufferRGB)
-
-		sourceRect = _Rect(0, 0, self._width, self._height)
-		destRect = _Rect(0, 0, other._width, other._height)
-		destRect0 = sourceRect.clone().move(ofsX, ofsY).intersect(destRect)
-		sourceRect0 = destRect0.clone().move(-ofsX, -ofsY)
-
-		for y in range(0, destRect0.height):
-			currentRowSrc = self._data[sourceRect0.y + y]
-			currentRowDest = other._data[destRect0.y + y]
-			for x in range(0, destRect0.width):
-				currentCellSrc = currentRowSrc[sourceRect0.x + x]
-				currentCellDest = currentRowDest[destRect0.x + x]
-				currentCellDest.c = currentCellSrc.c
-				currentCellDest.colBG = currentCellSrc.colBG
-				currentCellDest.colFG = currentCellSrc.colFG
-				currentCellDest.bChanged = True
-	#
+	################################################################################################################################
+	## Helper Methods
+	################################################################################################################################
 
 	#
 	# Convert the rgb color values to a string
@@ -172,6 +155,51 @@ class ConsoleBufferRGB(ConsoleBufferRGB_Mixins):
 		if fgRGB != None:
 			s += "\033[38;2;" + str((fgRGB >> 16) & 0xff) + ";" + str((fgRGB >> 8) & 0xff) + ";" + str(fgRGB & 0xff) + "m"
 		return s
+	#
+
+	################################################################################################################################
+	## Public Methods
+	################################################################################################################################
+
+	def clearInternalCache(self):
+		if self._bWithCaching:
+			self.__colMapBG.clear()
+			self.__colMapFG.clear()
+	#
+
+	def __str__(self):
+		return "<ConsoleBufferRGB size=%dx%d at %x>" % (self._width, self._height, id(self))
+	#
+
+	def __repr__(self):
+		return "<ConsoleBufferRGB size=%dx%d at %x>" % (self._width, self._height, id(self))
+	#
+
+	#
+	# Force full repaint for next rendering.
+	#
+	def fullRepaint(self):
+		self._bFullPaint = True
+	#
+
+	def bufferToBuffer(self, ofsX:int, ofsY:int, other, bForceFullRepaint:bool = False):
+		assert isinstance(other, ConsoleBufferRGB)
+
+		sourceRect = _Rect(0, 0, self._width, self._height)
+		destRect = _Rect(0, 0, other._width, other._height)
+		destRect0 = sourceRect.clone().move(ofsX, ofsY).intersect(destRect)
+		sourceRect0 = destRect0.clone().move(-ofsX, -ofsY)
+
+		for y in range(0, destRect0.height):
+			currentRowSrc = self._data[sourceRect0.y + y]
+			currentRowDest = other._data[destRect0.y + y]
+			for x in range(0, destRect0.width):
+				currentCellSrc = currentRowSrc[sourceRect0.x + x]
+				currentCellDest = currentRowDest[destRect0.x + x]
+				currentCellDest.c = currentCellSrc.c
+				currentCellDest.colBG = currentCellSrc.colBG
+				currentCellDest.colFG = currentCellSrc.colFG
+				currentCellDest.bChanged = True
 	#
 
 	def bufferToConsole(self, ofsX:int = 0, ofsY:int = 0, bForceFullRepaint:bool = False):
@@ -257,6 +285,10 @@ class ConsoleBufferRGB(ConsoleBufferRGB_Mixins):
 
 		print(Console.RESET_TOPLEFT, end="", flush=True)
 	#
+
+	################################################################################################################################
+	## Public Static Methods
+	################################################################################################################################
 
 #
 

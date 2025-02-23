@@ -15,6 +15,7 @@ from .SimpleTable import *
 
 
 
+_ConsoleBufferRGBCell2 = typing.NewType("_ConsoleBufferRGBCell2", object)
 
 class _ConsoleBufferRGBCell2(object):
 
@@ -22,9 +23,11 @@ class _ConsoleBufferRGBCell2(object):
 		self.data = [ colorBG, colorFG, c ]
 	#
 
-	def copyTo(self, other):
+	def copyTo(self, other:_ConsoleBufferRGBCell2):
 		if other.data != self.data:
-			other.data = list(self.data)
+			# other.data = list(self.data)
+			other.data.clear()
+			other.data.extend(self.data)
 	#
 
 #
@@ -36,15 +39,17 @@ class _ConsoleBufferRGBCell2(object):
 #
 class ConsoleBufferRGB2(object):
 
-	def extract(self, r:Rect):
-		rf = r.intersect(Rect(0, 0, self.__width, self.__height))
-		if (rf.width == 0) or (rf.height == 0):
-			return None
-		b = ConsoleBufferRGB2(rf.width, rf.height)
-		self.bufferToBufferCopy(-r.x, -r.y, b)
-		return b
-	#
+	################################################################################################################################
+	## Constants
+	################################################################################################################################
 
+	################################################################################################################################
+	## Constructor
+	################################################################################################################################
+
+	#
+	# Constructor method.
+	#
 	def __init__(self, width:int = None, height:int = None, bgColor:int = None, bTransparent:bool = False):
 		self.__width = Console.width() - 1 if width is None else width
 		self.__height = Console.height() - 1 if height is None else height
@@ -52,6 +57,7 @@ class ConsoleBufferRGB2(object):
 		self.__heightM1 = self.__height - 1
 		self.__numberOfCells = self.__width * self.__height
 		self.__bTransparent = bTransparent
+		self.__bgColor = bgColor
 
 		self.__lineNumbers = tuple(range(0, self.__height))
 		self.__columnNumbers = tuple(range(0, self.__width))
@@ -59,11 +65,9 @@ class ConsoleBufferRGB2(object):
 		c = None if bTransparent else " "
 		self.__dataMatrix = [ [ _ConsoleBufferRGBCell2(bgColor, None, c) for x in self.__columnNumbers ] for y in self.__lineNumbers ]
 
-		assert len(self.__lineNumbers) == self.__height
-		assert len(self.__columnNumbers) == self.__width
-		assert len(self.__dataMatrix) == self.__height
-		for i in range(0, self.__height):
-			assert len(self.__dataMatrix[i]) == self.__width
+		# ----------------------------------------------------------------
+
+		self.__asserts()
 
 		# ----------------------------------------------------------------
 		# caching
@@ -79,26 +83,13 @@ class ConsoleBufferRGB2(object):
 
 		# ----------------------------------------------------------------
 
-		if bgColor is not None:
-			self.fill(bgColor, None, None)
+		# if bgColor is not None:
+		# 	self.fill(bgColor, None, None)
 	#
 
-	#
-	# During rendering to the console color values are mapped from int to str.
-	# This cache can grow as it is not cleared automatically. If you use a large variety of colors
-	# you might want to clear this cache from time to time.
-	#
-	def clearColorRenderingCache(self):
-		self.__colorMapper.clear()
-	#
-
-	def __str__(self):
-		return "<ConsoleBufferRGB2 size=%dx%d at %x>" % (self.__width, self.__height, id(self))
-	#
-
-	def __repr__(self):
-		return "<ConsoleBufferRGB2 size=%dx%d at %x>" % (self.__width, self.__height, id(self))
-	#
+	################################################################################################################################
+	## Public Properties
+	################################################################################################################################
 
 	#
 	# Returns a tuple with two values: The width and height.
@@ -116,6 +107,101 @@ class ConsoleBufferRGB2(object):
 	@property
 	def height(self):
 		return self.__height
+	#
+
+	################################################################################################################################
+	## Helper Methods
+	################################################################################################################################
+
+	def __asserts(self):
+		assert len(self.__lineNumbers) == self.__height
+		assert len(self.__columnNumbers) == self.__width
+		assert len(self.__dataMatrix) == self.__height
+		for i in range(0, self.__height):
+			assert len(self.__dataMatrix[i]) == self.__width
+	#
+
+	def __dumpToSimpleTable(self) -> SimpleTable:
+		t = SimpleTable()
+		for row in self.__dataMatrix:
+			tRow = t.addRow()
+			for cell in row:
+				d = [
+					IntRGB.toCSS(cell.data[0]) if cell.data[0] is not None else "-",
+					IntRGB.toCSS(cell.data[1]) if cell.data[1] is not None else "-",
+					repr(cell.data[2]) ]
+				tRow.addCell().value = ":".join(d)
+
+		for i in range(0, t.numberOfColumns - 1):
+			t.column(i).vlineAfterColumn = True
+		for i in range(0, t.numberOfRows - 1):
+			t.row(i).hlineAfterRow = True
+
+		return t
+	#
+
+	################################################################################################################################
+	## Public Methods
+	################################################################################################################################
+
+	################################################################################################################################
+	## Public Static Methods
+	################################################################################################################################
+
+	#
+	# Grow the buffer vertically by the specified number of rows.
+	#
+	def growBufferY(self, nRows:int):
+		assert isinstance(nRows, int)
+		assert nRows >= 0
+
+		if nRows == 0:
+			return
+
+		c = None if self.__bTransparent else " "
+		for i in range(0, nRows):
+			_row = [ _ConsoleBufferRGBCell2(self.__bgColor, None, c) for x in self.__columnNumbers ]
+			self.__dataMatrix.append(_row)
+
+		self.__height += nRows
+
+		self.__heightM1 = self.__height - 1
+		self.__numberOfCells = self.__width * self.__height
+		self.__lineNumbers = tuple(range(0, self.__height))
+
+		self.__asserts()
+
+		# clear caching
+
+		self.__oldData = None
+		self.__oldX = None
+		self.__oldY = None
+	#
+
+	def extract(self, r:Rect):
+		rf = r.intersect(Rect(0, 0, self.__width, self.__height))
+		if (rf.width == 0) or (rf.height == 0):
+			return None
+		b = ConsoleBufferRGB2(rf.width, rf.height)
+		self.bufferToBufferCopy(-r.x, -r.y, b)
+		return b
+	#
+
+	#
+	# During rendering to the console color values are mapped from int to str.
+	# This cache can grow as it is not cleared automatically. If you use a large variety of colors
+	# you might want to clear this cache from time to time.
+	#
+	def clearColorRenderingCache(self):
+		self.__colorMapper.clear()
+	#
+
+	def __str__(self):
+		return "<ConsoleBufferRGB2 size=%dx%d at %x>" % (self.__width, self.__height, id(self))
+	#
+
+	def __repr__(self):
+		return "<ConsoleBufferRGB2 size=%dx%d at %x>" % (self.__width, self.__height, id(self))
 	#
 
 	#
@@ -243,25 +329,6 @@ class ConsoleBufferRGB2(object):
 			print("".join(characters), end='', flush=False)
 
 		print(Console.RESET_TOPLEFT, end="", flush=True)	# reset color output and position cursor
-	#
-
-	def __dumpToSimpleTable(self) -> SimpleTable:
-		t = SimpleTable()
-		for row in self.__dataMatrix:
-			tRow = t.addRow()
-			for cell in row:
-				d = [
-					IntRGB.toCSS(cell.data[0]) if cell.data[0] is not None else "-",
-					IntRGB.toCSS(cell.data[1]) if cell.data[1] is not None else "-",
-					repr(cell.data[2]) ]
-				tRow.addCell().value = ":".join(d)
-
-		for i in range(0, t.numberOfColumns - 1):
-			t.column(i).vlineAfterColumn = True
-		for i in range(0, t.numberOfRows - 1):
-			t.row(i).hlineAfterRow = True
-
-		return t
 	#
 
 	def dump(self):

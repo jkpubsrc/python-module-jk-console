@@ -154,11 +154,87 @@ Please note that the current color settings are valid for all future printing to
 
 ### Resetting color
 
-In order to reset color settings use the folloiwing code:
+In order to reset color settings use the following code:
 
 ```python
 print(Console.RESET)
 ```
+
+### Styling text via wrapper functions
+
+There are some functions provided for convenience that can wrap text into styling and color codes. Example:
+
+```python
+from jk_console.wrappers import *
+
+print("This text is " + bold("bold") + ", this text is " + italic("italic"))
+```
+
+The following functions are provided:
+
+* Styling
+	* `bold(...)`
+	* `italic(...)`
+	* `underline(...)`
+* Standard colors
+	* `stdBlack(...)`
+	* `stdBlue(...)`
+	* `stdGreen(...)`
+	* `stdCyan(...)`
+	* `stdRed(...)`
+	* `stdPurple(...)`
+	* `stdDarkYellow(...)`,
+	* `stdLightGray(...)`,
+	* `stdDarkGray(...)`,
+	* `stdLightBlue(...)`,
+	* `stdLightGreen(...)`,
+	* `stdLightCyan(...)`,
+	* `stdLightRed(...)`,
+	* `stdLightPurple(...)`,
+	* `stdYellow(...)`
+	* `stdWhite(...)`
+* RGB colors
+	* `black(...)`
+	* `darkGrey(...)`
+	* `grey(...)`
+	* `lightGrey(...)`
+	* `white(...)`
+	* `darkRed(...)`
+	* `red(...)`
+	* `lightRed(...)`
+	* `darkOrange(...)`
+	* `orange(...)`
+	* `lightOrange(...)`
+	* `darkYellow(...)`
+	* `yellow(...)`
+	* `lightYellow(...)`
+	* `darkYellowGreen(...)`
+	* `yellowGreen(...)`
+	* `lightYellowGreen(...)`
+	* `darkGreen(...)`
+	* `green(...)`
+	* `lightGreen(...)`
+	* `darkGreenCyan(...)`
+	* `greenCyan(...)`
+	* `lightGreenCyan(...)`
+	* `darkCyan(...)`
+	* `cyan(...)`
+	* `lightCyan(...)`
+	* `darkCyanBlue(...)`
+	* `cyanBlue(...)`
+	* `lightCyanBlue(...)`
+	* `darkBlue(...)`
+	* `blue(...)`
+	* `lightBlue(...)`
+	* `darkBlueViolet(...)`
+	* `blueViolet(...)`
+	* `lightBlueViolet(...)`
+	* `darkViolet(...)`
+	* `violet(...)`
+	* `lightViolet(...)`
+	* `darkVioletRed(...)`
+	* `violetRed(...)`
+	* `lightVioletRed(...)`
 
 Contact Information
 -------------------

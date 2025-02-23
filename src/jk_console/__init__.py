@@ -2,7 +2,8 @@
 
 
 __author__ = "Jürgen Knauth"
-__version__ = "0.2024.4.24"
+__version__ = "0.2025.2.23"
+__license__ = "Apache2"
 
 
 
@@ -18,6 +19,10 @@ from .SimpleTable import SimpleTable, SimpleTableCell, SimpleTableColumn, Simple
 from .EventCollector import EventCollector
 from .FramedBoxSettingsRGB import FramedBoxSettingsRGB
 from .ConsoleBufferRGB2 import ConsoleBufferRGB2
+
+from . import wrappers
+
+
 
 
 

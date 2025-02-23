@@ -1,7 +1,6 @@
 
 
-
-import re
+import typing
 
 from .impl._parseCSS import parseCSS_toARGB
 
@@ -23,6 +22,8 @@ class IntRGB(object):
 
 	@staticmethod
 	def toCSS(rgb:int) -> str:
+		assert isinstance(rgb, int)
+
 		r = (rgb // 65536) % 256
 		g = (rgb // 256) % 256
 		b = rgb % 256
@@ -30,12 +31,43 @@ class IntRGB(object):
 	#
 
 	@staticmethod
+	def fade(rgbA:int, rgbB:int, f:typing.Union[float,int] = 0.5) -> int:
+		assert isinstance(rgbA, int)
+		assert isinstance(rgbB, int)
+		assert isinstance(f, (float,int))
+
+		rA = (rgbA // 65536) % 256
+		gA = (rgbA // 256) % 256
+		bA = rgbA % 256
+
+		rB = (rgbB // 65536) % 256
+		gB = (rgbB // 256) % 256
+		bB = rgbB % 256
+
+		if f < 0:
+			f = 0
+		if f > 1:
+			f = 1
+		fm1 = 1 - f
+
+		r = round(rA*f + rB*fm1)
+		g = round(gA*f + gB*fm1)
+		b = round(bA*f + bB*fm1)
+
+		return r * 65536 + g * 256 + b
+	#
+
+	@staticmethod
 	def rgb256(r:int, g:int, b:int):
-		if (r < 0) or (r > 255):
+		assert isinstance(r, int)
+		assert isinstance(g, int)
+		assert isinstance(b, int)
+
+		if not isinstance(r, int) or (r < 0) or (r > 255):
 			raise Exception("Red value must be a valid integer value! (Value specified: " + str(r) + ")")
-		if (g < 0) or (g > 255):
+		if not isinstance(g, int) or (g < 0) or (g > 255):
 			raise Exception("Red value must be a valid integer value! (Value specified: " + str(g) + ")")
-		if (b < 0) or (b > 255):
+		if not isinstance(b, int) or (b < 0) or (b > 255):
 			raise Exception("Red value must be a valid integer value! (Value specified: " + str(b) + ")")
 		return 0xff000000 | ((((r << 8) + g) << 8) + b)
 	#
@@ -53,12 +85,13 @@ class IntRGB(object):
 
 	@staticmethod
 	def hsl1(h:float, s:float, l:float):
-		if (h < 0) or (h > 1):
+		if not isinstance(h, (int, float)) or (h < 0) or (h > 1):
 			raise Exception("Hue value must be a valid float value in the range [0..1]! (h is " + str(h) + ")")
-		if (s < 0) or (s > 1):
+		if not isinstance(s, (int, float)) or (s < 0) or (s > 1):
 			raise Exception("Saturation value must be a valid float value in the range [0..1]! (s is " + str(s) + ")")
-		if (l < 0) or (l > 1):
+		if not isinstance(l, (int, float)) or (l < 0) or (l > 1):
 			raise Exception("Luminance value must be a valid float value in the range [0..1]! (l is " + str(l) + ")")
+
 		if s == 0:
 			s = 0.0001
 		q = l * (1 + s) if l < 0.5 else l + s - l * s
