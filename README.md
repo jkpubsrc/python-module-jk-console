@@ -13,8 +13,8 @@ This python module provides a variety of essential functionality for implementin
 
 Information about this module can be found here:
 
-* [github.org](https://github.com/jkpubsrc/python-module-jk-console)
-* [pypi.python.org](https://pypi.python.org/pypi/jk_console)
+* [github.com](https://github.com/jkpubsrc/python-module-jk-console)
+* [pypi.org](https://pypi.org/project/jk-console/)
 
 Why this module?
 ----------------
