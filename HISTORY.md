@@ -26,4 +26,13 @@
 * 2025-02-23:
 	* Added: Wrappers for bold, italic and underline text and a log of colors
 
+* 2025-09-11:
+	* Improved: Type hints
+
+* 2025-09-29:
+	* Added: removeRow(..)
+
+* 2025-09-30:
+	* Added: swapRow(..)
+
 

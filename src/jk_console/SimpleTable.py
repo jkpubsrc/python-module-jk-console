@@ -389,6 +389,20 @@ class SimpleTable(SimpleTableConstants):
 		return r
 	#
 
+	def swapRow(self, index1:int, index2:int) -> None:
+		if index1 == index2:
+			return
+		temp = self.__rows[index1]
+		self.__rows[index1] = self.__rows[index2]
+		self.__rows[index2] = temp
+	#
+
+	def removeRow(self, index:int) -> None:
+		if (index < 0) or (index >= len(self.__rows)):
+			raise IndexError(f"{index} is invalid! (condition: 0 <= {index} < {len(self.__rows)})")
+		del self.__rows[index]
+	#
+
 	def __len__(self):
 		return len(self.__rows)
 	#

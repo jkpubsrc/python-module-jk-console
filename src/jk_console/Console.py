@@ -51,50 +51,50 @@ def ____addToTree(tree, item, n):
 class Console(object):
 
 	class ForeGround:
-		BLACK = None
-		DARK_GRAY = None
-		GRAY = None
-		LIGHT_GRAY = None
-		WHITE = None
+		BLACK:str = None
+		DARK_GRAY:str = None
+		GRAY:str = None
+		LIGHT_GRAY:str = None
+		WHITE:str = None
 
-		RED = None
-		ORANGE = None
-		YELLOW = None
-		YELLOWGREEN = None
-		GREEN = None
-		GREENCYAN = None
-		CYAN = None
-		CYANBLUE = None
-		BLUE = None
-		BLUEVIOLET = None
-		VIOLET = None
-		VIOLETRED = None
+		RED:str = None
+		ORANGE:str = None
+		YELLOW:str = None
+		YELLOWGREEN:str = None
+		GREEN:str = None
+		GREENCYAN:str = None
+		CYAN:str = None
+		CYANBLUE:str = None
+		BLUE:str = None
+		BLUEVIOLET:str = None
+		VIOLET:str = None
+		VIOLETRED:str = None
 
-		DARK_RED = None
-		DARK_ORANGE = None
-		DARK_YELLOW = None
-		DARK_YELLOWGREEN = None
-		DARK_GREEN = None
-		DARK_GREENCYAN = None
-		DARK_CYAN = None
-		DARK_CYANBLUE = None
-		DARK_BLUE = None
-		DARK_BLUEVIOLET = None
-		DARK_VIOLET = None
-		DARK_VIOLETRED = None
+		DARK_RED:str = None
+		DARK_ORANGE:str = None
+		DARK_YELLOW:str = None
+		DARK_YELLOWGREEN:str = None
+		DARK_GREEN:str = None
+		DARK_GREENCYAN:str = None
+		DARK_CYAN:str = None
+		DARK_CYANBLUE:str = None
+		DARK_BLUE:str = None
+		DARK_BLUEVIOLET:str = None
+		DARK_VIOLET:str = None
+		DARK_VIOLETRED:str = None
 
-		LIGHT_RED = None
-		LIGHT_ORANGE = None
-		LIGHT_YELLOW = None
-		LIGHT_YELLOWGREEN = None
-		LIGHT_GREEN = None
-		LIGHT_GREENCYAN = None
-		LIGHT_CYAN = None
-		LIGHT_CYANBLUE = None
-		LIGHT_BLUE = None
-		LIGHT_BLUEVIOLET = None
-		LIGHT_VIOLET = None
-		LIGHT_VIOLETRED = None
+		LIGHT_RED:str = None
+		LIGHT_ORANGE:str = None
+		LIGHT_YELLOW:str = None
+		LIGHT_YELLOWGREEN:str = None
+		LIGHT_GREEN:str = None
+		LIGHT_GREENCYAN:str = None
+		LIGHT_CYAN:str = None
+		LIGHT_CYANBLUE:str = None
+		LIGHT_BLUE:str = None
+		LIGHT_BLUEVIOLET:str = None
+		LIGHT_VIOLET:str = None
+		LIGHT_VIOLETRED:str = None
 
 		"""
 		BLACK = '\033[30m'
@@ -236,50 +236,50 @@ class Console(object):
 	#
 
 	class BackGround:
-		BLACK = None
-		DARK_GRAY = None
-		GRAY = None
-		LIGHT_GRAY = None
-		WHITE = None
+		BLACK:str = None
+		DARK_GRAY:str = None
+		GRAY:str = None
+		LIGHT_GRAY:str = None
+		WHITE:str = None
 
-		RED = None
-		ORANGE = None
-		YELLOW = None
-		YELLOWGREEN = None
-		GREEN = None
-		GREENCYAN = None
-		CYAN = None
-		CYANBLUE = None
-		BLUE = None
-		BLUEVIOLET = None
-		VIOLET = None
-		VIOLETRED = None
+		RED:str = None
+		ORANGE:str = None
+		YELLOW:str = None
+		YELLOWGREEN:str = None
+		GREEN:str = None
+		GREENCYAN:str = None
+		CYAN:str = None
+		CYANBLUE:str = None
+		BLUE:str = None
+		BLUEVIOLET:str = None
+		VIOLET:str = None
+		VIOLETRED:str = None
 
-		DARK_RED = None
-		DARK_ORANGE = None
-		DARK_YELLOW = None
-		DARK_YELLOWGREEN = None
-		DARK_GREEN = None
-		DARK_GREENCYAN = None
-		DARK_CYAN = None
-		DARK_CYANBLUE = None
-		DARK_BLUE = None
-		DARK_BLUEVIOLET = None
-		DARK_VIOLET = None
-		DARK_VIOLETRED = None
+		DARK_RED:str = None
+		DARK_ORANGE:str = None
+		DARK_YELLOW:str = None
+		DARK_YELLOWGREEN:str = None
+		DARK_GREEN:str = None
+		DARK_GREENCYAN:str = None
+		DARK_CYAN:str = None
+		DARK_CYANBLUE:str = None
+		DARK_BLUE:str = None
+		DARK_BLUEVIOLET:str = None
+		DARK_VIOLET:str = None
+		DARK_VIOLETRED:str = None
 
-		LIGHT_RED = None
-		LIGHT_ORANGE = None
-		LIGHT_YELLOW = None
-		LIGHT_YELLOWGREEN = None
-		LIGHT_GREEN = None
-		LIGHT_GREENCYAN = None
-		LIGHT_CYAN = None
-		LIGHT_CYANBLUE = None
-		LIGHT_BLUE = None
-		LIGHT_BLUEVIOLET = None
-		LIGHT_VIOLET = None
-		LIGHT_VIOLETRED = None
+		LIGHT_RED:str = None
+		LIGHT_ORANGE:str = None
+		LIGHT_YELLOW:str = None
+		LIGHT_YELLOWGREEN:str = None
+		LIGHT_GREEN:str = None
+		LIGHT_GREENCYAN:str = None
+		LIGHT_CYAN:str = None
+		LIGHT_CYANBLUE:str = None
+		LIGHT_BLUE:str = None
+		LIGHT_BLUEVIOLET:str = None
+		LIGHT_VIOLET:str = None
+		LIGHT_VIOLETRED:str = None
 
 		STD_BLACK = '\033[40m'
 		STD_BLUE = '\033[44m'
@@ -416,9 +416,11 @@ class Console(object):
 	RESET = "\033[0m"
 	RESET_TOPLEFT = "\033[0m\033[1;1H"
 
-	BOLD = "\033[01m"
-	UNDERLINE = "\033[04m"
-	STRIKETHROUGH = "\033[09m"
+	BOLD = "\033[1m"
+	UNDERLINE = "\033[4m"
+	STRIKETHROUGH = "\033[9m"
+	BOLD_OFF = "\033[22m"
+	UNDERLINE_OFF = "\033[24m"
 
 	class Input:
 		KEY_CTRL_Y				= "\x19"
