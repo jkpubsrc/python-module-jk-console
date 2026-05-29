@@ -27,7 +27,6 @@ classifiers = [
 	"Programming Language :: Python :: 3",
 ]
 dependencies = [
-	"msvcrt; sys_platform=='win32'",
 	"jk_terminal_essentials >= 0.2026.5.29.1",
 ]
 
