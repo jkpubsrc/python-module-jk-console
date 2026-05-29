@@ -60,7 +60,7 @@ class OutputLineList(object):
 
 		if bPositionCursorAtStart:
 			_cpos = jk_terminal_essentials.getCursorPosition()
-			cursorY = _cpos.column - len(strLines)
+			cursorY = _cpos.row - len(strLines)
 			assert cursorY >= 0
 			jk_console.Console.moveCursorTo(0, cursorY)
 
@@ -94,11 +94,11 @@ class OutputLineList(object):
 	#
 
 	def printPrepareReprint(self):
-		self.__print(True)
+		self.__print(True, sys.stdout)
 	#
 
 	def printFinal(self):
-		self.__print(False)
+		self.__print(False, sys.stdout)
 	#
 
 #

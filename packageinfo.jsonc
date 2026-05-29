@@ -22,15 +22,15 @@
 		"license": "Apache2",
 		"name": "jk_console",
 		"packageClass": "python-module",
-		"version": "0.2026.5.29.1"
+		"version": "0.2026.5.29.3"
 	},
 	"requirements": {
 		"htmlcssjs_packages": [],
 		"python_packages": [
-			{
-				"import": "msvcrt",
-				"os": "windows"
-			},
+			// {
+			// 	"import": "msvcrt",
+			// 	"os": "windows"
+			// },
 			{
 				"import": "jk_terminal_essentials",
 				"version": ">= 0.2026.5.29.1",
