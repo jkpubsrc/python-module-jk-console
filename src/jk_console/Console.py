@@ -845,7 +845,7 @@ class Console(object):
 	# @return	int y		The row position (starting at zero).
 	#
 	@staticmethod
-	def getCursorPosition() -> typing.Tuple[int,int]:
+	def getCursorPosition() -> tuple[int,int]:
 		print("\u001B[6n", end="", flush=True)
 		buf = ""
 		c = None

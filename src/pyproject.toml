@@ -28,7 +28,7 @@ classifiers = [
 ]
 dependencies = [
 	"msvcrt; platform_system=='Windows'",
-	"jk_terminal_essentials >= 0.2024.2.2",
+	"jk_terminal_essentials >= 0.2026.5.29.1",
 ]
 
 #[project.urls]

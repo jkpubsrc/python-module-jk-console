@@ -35,4 +35,6 @@
 * 2025-09-30:
 	* Added: swapRow(..)
 
+* 2026-05-29:
+	* Added: uprint submodule
 
