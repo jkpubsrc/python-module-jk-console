@@ -38,3 +38,6 @@
 * 2026-05-29:
 	* Added: uprint submodule
 
+* 2026-06-05:
+	* Minor bugfixes
+

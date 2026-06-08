@@ -9,9 +9,9 @@ import jk_typing
 # import jk_json
 # import jk_prettyprintobj
 import jk_terminal_essentials
-import jk_console
 
 from .ConsoleLineBuffer import ConsoleLineBuffer
+from ..Console import Console
 
 
 
@@ -62,7 +62,7 @@ class OutputLineList(object):
 			_cpos = jk_terminal_essentials.getCursorPosition()
 			cursorY = _cpos.row - len(strLines)
 			assert cursorY >= 0
-			jk_console.Console.moveCursorTo(0, cursorY)
+			Console.moveCursorTo(0, cursorY)
 
 		sys.stdout.flush()
 	#
@@ -91,6 +91,7 @@ class OutputLineList(object):
 	def createAndAppend(self, colorOverride:str|None = None) -> ConsoleLineBuffer:
 		clb = ConsoleLineBuffer(colorOverride=colorOverride)
 		self.__lines.append(clb)
+		return clb
 	#
 
 	def printPrepareReprint(self):

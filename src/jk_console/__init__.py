@@ -2,7 +2,7 @@
 
 
 __author__ = "Jürgen Knauth"
-__version__ = "0.2026.5.29.3"
+__version__ = "0.2026.6.5"
 __license__ = "Apache2"
 
 

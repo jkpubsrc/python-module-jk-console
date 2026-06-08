@@ -11,7 +11,10 @@ import sys
 import time
 import datetime
 
-from jk_console import *
+from ..Console import Console
+from ..ConsoleBuffer import ConsoleBuffer
+from ..Rect import Rect
+
 
 
 
